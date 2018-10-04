@@ -1,2 +1,2 @@
-# FinalProject
+# FinalProjects
 E-commerce
