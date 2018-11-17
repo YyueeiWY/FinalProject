@@ -1,72 +1,8 @@
-<?php  
-//Start the Session
+<?php
    session_start();
 
    include 'connection_file.php';
    
-   if(isset($_POST['login'])){
-	   	if (isset($_POST['LoginID']) and isset($_POST['Password'])){
-			//then
-			$username = $_POST['LoginID'];
-			$password = ($_POST['Password']);
-			$query = "SELECT * FROM `login` WHERE username='$username' and Password='$password'";
-		
-			$result = mysqli_query($conn, $query) or die(mysqli_error($conn));
-			$count = mysqli_num_rows($result);
-			
-			//if equal to server 
-			if ($count == 1){
-				$loginquery = "SELECT * FROM `login` WHERE username = '$username'";
-	
-				if ($result = mysqli_query($conn,$loginquery)){
-					// Fetch one and one row
-					while ($row = mysqli_fetch_row($result)){
-						$_SESSION['admin'] = $row[8];
-					}
-				}
-			
-				$_SESSION['LoginID'] = $username;
-				header('Location: index.php');
-			}else{
-				//else invalid
-				phpAlert("Invalid ID or Password");
-			}
-		
-		}
-   }
-   
-   
-   /*
-	//If login
-	if (isset($_SESSION['LoginID'])){
-		phpAlert("Already Login");
-		header('Location: index.php');
-	}else{
-		
-	if (isset($_POST['LoginID']) and isset($_POST['Password'])){
-		//then
-		$LoginID = $_POST['LoginID'];
-		$password = sha1($_POST['Password']);
-	
-	//select database fomr server
-
-		$query = "SELECT * FROM `login` WHERE AgentID='$LoginID' and Password='$password'";
-
-		$result = mysqli_query($conn, $query) or die(mysqli_error($conn));
-		$count = mysqli_num_rows($result);
-		
-	//if equal to server 
-	if ($count == 1){
-		$_SESSION['LoginID'] = $LoginID;
-		header('Location: index.php');
-	}else{
-		//else invalid
-		phpAlert("Invalid ID or Password");
-	}
-	
-	}
-}
-*/
 ?>
 
 <!DOCTYPE html>
@@ -78,10 +14,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
+	<link rel="stylesheet" type="text/css" href="css/style2.css" />
+	
     <title>ROYARY Resources</title>
 	<!-- Favicons -->
-	<link href="img/icons/RoyaryResources-4.png" rel="icon">
+	<link href="images/icons/RoyaryResources-4.png" rel="icon">
 
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -92,11 +29,11 @@
     <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
-
+  
     <!-- Custom styles for this template -->
     <link href="css/agency.css" rel="stylesheet">
 	<link href="css/sidebar.css" rel="stylesheet">
-
+	
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.css">
 	<!--===============================================================================================-->
@@ -111,49 +48,13 @@
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<!--===============================================================================================-->
+	
+	<link href="css/cart.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
+
   </head>
-
+  
   <body id="page-top">
-<style>
-.dropbtn {
-    background-color: rgba(0, 0, 0, .1);
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
-
-.dropbtn:hover, .dropbtn:focus {
-    background-color: rgba(0, 0, 0, .6);
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown a:hover {background-color: #ddd}
-
-.show {display:block;}
-</style>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
@@ -197,15 +98,7 @@
 		  
 			<!-- cart -->
 			<ul class="navbar-nav text-uppercase">
-			<li class="nav-item open-cart-button cart-dropdown"><a href="order.php"><i class="fa fa-shopping-cart" style="font-size:24px"></i>
-				<i id="cart_count"><?php 
-				if(isset($_SESSION["cart_item"])){
-					echo count($_SESSION["cart_item"]); 
-				}else{
-					echo 0; 
-				}
-				?></i>
-			</a></li>
+			<li class="nav-item open-cart-button cart-dropdown"><a href="order.php"><i class="fa fa-shopping-cart" style="font-size:24px"></i></a></li>
 			<li class="nav-item open-cart-button news-dropdown"><a href="news.php"><i class="fa fa-columns" style="font-size:24px"></i></a></li>
 			</ul>
 			<!--
@@ -223,70 +116,58 @@
         </div>
       </div>
     </nav>
+	
+	<div class="cart-box"></div>
+	
+    <section id="portfolio1" class="m-t-50">
+	<form method="post" action="#">
+      <div class="container wow fadeInUp">
+        <div class="section-header">
+		<div class="aboout_logo">
+		  <img src="img/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
+          <h1 class="section-title">News</h1>
+		  </div>
+          <p class="section-description">Regen Cosmetic / South Korea</p>
+        </div>
 
-    <!-- Header -->
-
-
-    <!-- Login -->
-    <section class="py-0">
-	<div class="limiter">
-		<div class="container-login100">
-			<div class="wrap-login100">
-				<div class="login100-pic js-tilt" data-tilt>
-					<img src="img/icons/img-01.png" alt="IMG">
-				</div>
-				<form class="login100-form validate-form" action="" method="POST">
-					<span class="login100-form-title">
-						Sign In
-					</span>
-
-					<div class="wrap-input100 validate-input" data-validate = "Login ID is required: ex@abc.xyz">
-						<input class="input100" type="text" name="LoginID" placeholder="User ID">
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-address-card-o" aria-hidden="true"></i>
-						</span>
-					</div>
-
-					<div class="wrap-input100 validate-input" data-validate = "Password is required">
-						<input class="input100" type="password" name="Password" placeholder="Password">
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
-					
-					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" type="submit" name="login">
-							Login
-						</button>
-					</div>
-					
-					<!-- forget ID
-					<div class="text-center p-t-12">
-						<span class="txt1">
-							Forgot
-						</span>
-						<a class="txt2" href="#">
-							Username / Password?
-						</a>
-					</div>
-					-->
-
-					<div class="text-center p-t-136">
-						<span class="login100-form-title">
-							Sign Up Now
-						</span>
-						<a class="txt2" href="register.php">
-							Create your Account
-							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
-						</a>
-					</div>
-				</form>
+<div class="row">				
+	<div class="cart-popup col-md-12" id="myCart">
+		<div class="row">
+			<div style="width: auto;">
+				<h2>News</h2>
 			</div>
 		</div>
+		<div class="m-t-50" style=" overflow-y: auto; height: 500px;">
+		<?php
+		if (isset($_SESSION['LoginID'])){
+			$username = $_SESSION['LoginID'];
+
+		$query = "SELECT * FROM `notification` WHERE notifid = '$username' ORDER BY date DESC LIMIT 0, 10";
+		
+		if ($result = mysqli_query($GLOBALS['conn'],$query)){
+			
+		// Fetch one and one row
+			while ($row = mysqli_fetch_row($result)){
+				$title = $row[1];
+				$content = $row[2];
+				$date = $row[3];
+		?>
+			<div class="news">
+				<label class="text-uppercase"><strong><?php echo $title; ?></strong></label>
+					<h3><?php echo $content; ?></h3><?php echo $date; ?>
+			</div>
+		<?php
+			}
+		  }
+		}
+		?>
+			
+		</div>
 	</div>
-    </section>
+</div>
+      </div>
+		</form>
+    </section><!-- #portfolio -->
 
     <!-- Footer -->
     <footer>
@@ -328,23 +209,6 @@
       </div>
     </footer>
 
-	<!--===============================================================================================-->	
-	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-	<!--===============================================================================================-->
-	<script src="vendor/bootstrap/js/popper.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-	<!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
-	<!--===============================================================================================-->
-	<script src="vendor/tilt/tilt.jquery.min.js"></script>
-	<script >
-		$('.js-tilt').tilt({
-			scale: 1.1
-		})
-	</script>
-	<!--===============================================================================================-->
-	<script src="js/main.js"></script>
-
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -352,14 +216,29 @@
     <!-- Plugin JavaScript -->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Contact form JavaScript -->
-    <script src="js/jqBootstrapValidation.js"></script>
-    <script src="js/contact_me.js"></script>
-
     <!-- Custom scripts for this template -->
     <script src="js/agency.min.js"></script>
 	<script src="js/sidebar.js"></script>
-	<script>
+	
+	<!-- JavaScript Libraries -->
+	<!--<script src="lib/jquery/jquery.min.js"></script>-->
+	<script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="lib/easing/easing.min.js"></script>
+	<script src="lib/wow/wow.min.js"></script>
+	
+	<script src="lib/waypoints/waypoints.min.js"></script>
+	<script src="lib/counterup/counterup.min.js"></script>
+	<script src="lib/superfish/hoverIntent.js"></script>
+	<script src="lib/superfish/superfish.min.js"></script>
+	
+	<!-- Template Main Javascript File -->
+	<script src="js/portfolio.js"></script>
+
+	
+  </body>
+
+</html>
+<script>
 	/* When the user clicks on the button, 
 	toggle between hiding and showing the dropdown content */
 	function myFunction() {
@@ -380,7 +259,4 @@
 		}
 	}
 	}
-	</script>
-  </body>
-
-</html>
+</script>

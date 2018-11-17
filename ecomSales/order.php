@@ -2,6 +2,14 @@
    session_start();
 
    include 'connection_file.php';
+   
+   if(isset($_POST['checkout'])){
+		if(isset($_SESSION["cart_item"])){
+			header('Location: checkout.php');
+		}else{
+			phpAlert('Cart Empty');
+		}
+   }
 ?>
 
 <!DOCTYPE html>
@@ -72,87 +80,169 @@ function cartAction(action,product_id, product_code, current_quantity) {
 		location.reload();
 	
 	}else{
-		
-		var queryString = "";
+	var queryString = "";
+	if(action != "") {
+		switch(action) {
+			case "add":
+				queryString = 'action='+action+'&id='+product_id+'&code='+ product_code+'&quantity='+$("#qty_"+product_code).val();
+			break;
+			case "remove":
+				queryString = 'action='+action+'&id='+product_id+'&code='+ product_code;
+			break;
+			case "empty":
+				queryString = 'action='+action;
+			break;
+		}	 
+	}
+	
+	jQuery.ajax({
+	url: "ajax_action.php",
+	data:queryString,
+	type: "POST",
+	success:function(data){
+		$("#cart-item").html(data);
+
 		if(action != "") {
 			switch(action) {
 				case "add":
-					queryString = 'action='+action+'&id='+product_id+'&code='+ product_code+'&quantity='+$("#qty_"+product_code).val();
+					$("#add_"+product_code).hide();
+					$("#added_"+product_code).show();
+						
+						jQuery.ajax({
+						url: "ajax_count.php",
+						data:{
+							add:'add'
+						},
+						type: "POST",
+						dataType:"json",
+						success:function(data){
+							$("#cart-count").html(data.items);
+						},
+						error:function (data){
+							console.log('fail to add');
+						}
+						});
+						
 				break;
 				case "remove":
-					queryString = 'action='+action+'&id='+product_id+'&code='+ product_code;
+					$("#add_"+product_code).show();
+					$("#added_"+product_code).hide();
+						
+						jQuery.ajax({
+						url: "ajax_remove.php",
+						data:{
+							remove:'remove'
+						},
+						type: "POST",
+						dataType:"json",
+						success:function(data){
+							$("#cart-count").html(data.items);
+							$("#cart-info").html(data.items);
+							$("#cart-info1").html(data.items);
+						}
+						});
+						
+						jQuery.ajax({
+						url: "ajax_remove.php",
+						data:{
+							summary:'summary'
+						},
+						type: "POST",
+						success:function(data){
+							$("#producttotal").html(data);
+						}
+						});
+						
 				break;
 				case "empty":
-					queryString = 'action='+action;
+					$(".btnAddAction").show();
+					$(".btnAdded").hide();
+					
+						jQuery.ajax({
+						url: "ajax_remove.php",
+						data:{
+							empty:'empty'
+						},
+						type: "POST",
+						dataType:"json",
+						success:function(data){
+							$("#cart-count").html(data.items);
+							$("#cart-info").html(data.items);
+							$("#cart-info1").html(data.items);
+						}
+						});
+						
+						jQuery.ajax({
+						url: "ajax_remove.php",
+						data:{
+							summary:'summary'
+						},
+						type: "POST",
+						success:function(data){
+							$("#producttotal").html(data);
+						}
+						});
+					
 				break;
 			}	 
 		}
-		
-		jQuery.ajax({
-		url: "ajax_action.php",
-		data:queryString,
-		type: "POST",
-		success:function(data){
-			$("#cart-item").html(data);
-	
-			if(action != "") {
-				switch(action) {
-					case "add":
-						$("#add_"+product_code).hide();
-						$("#added_"+product_code).show();
-						
-							jQuery.ajax({
-							url: "ajax_count.php",
-							dataType:"json",
-							data:{
-								add:'add'
-							},
-							type: "POST",
-							success:function(data){
-								$("#cart-count").html(data.items);
-							},
-							error:function (data){
-								console.log('fail to add');
-							}
-							});
-							
-					break;
-					case "remove":
-						$("#add_"+product_code).show();
-						$("#added_"+product_code).hide();
-							
-							jQuery.ajax({
-							url: "ajax_remove.php",
-							data:{
-								remove:'remove'
-							},
-							type: "POST",
-							success:function(data){
-								$("#cart-count").html(data.items);
-							},
-							error:function (data){
-								console.log('fail to remove');
-							}
-							});
-							
-					break;
-					case "empty":
-						$(".btnAddAction").show();
-						$(".btnAdded").hide();
-						
-					break;
-				}	 
-			}
-		},
-		error:function (){}
-		});
-	}
+	},
+	error:function (){}
+	});
+}
 }
 </script>
   </head>
 
   <body id="page-top">
+<style>
+#regForm {
+  margin: auto;
+  font-family: Raleway;
+  padding-bottom: 60px;
+  min-width: 300px;
+}
 
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+  background-color: #ffdddd;
+}
+
+/* Hide all steps by default: */
+.tab {
+  display: none;
+}
+
+#prevBtn {
+  background-color: #bbbbbb;
+  left:0;
+}
+
+/* Make circles that indicate the steps of the form: */
+.step {
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbbbbb;
+  border: none;  
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.5;
+}
+
+.step.active {
+  opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+  background-color: #4CAF50;
+}
+.container-margin{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+</style>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
 
@@ -225,182 +315,148 @@ function cartAction(action,product_id, product_code, current_quantity) {
 	<div class="cart-box"></div>
 	
     <section id="portfolio1" class="m-t-50">
+	<form method="post">
       <div class="container wow fadeInUp">
         <div class="section-header">
 		<div class="aboout_logo">
-		<img src="img/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
-          <h1 class="section-title">Products</h1>
+		  <img src="img/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
+          <h1 class="section-title">My Order</h1>
 		  </div>
           <p class="section-description">Regen Cosmetic / South Korea</p>
         </div>
-        <div class="row">
 
-          <div class="col-lg-12">
-            <ul id="portfolio-flters">
-              <li data-filter=".filter-app, .filter-card, .filter-logo, .filter-web" class="filter-active">All</li>
-              <li data-filter=".filter-app">V Mask</li>
-              <li data-filter=".filter-card">GOLD FOIL</li>
-              <li data-filter=".filter-logo">packages</li>
-              <li data-filter=".filter-web">Others</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="row" id="portfolio-wrapper">
-          <div class="portfolio-item filter-app">
-			<div class="line"><h2>V Mask</h2></div>
-	<?php
-	$product_array = runQuery("SELECT product.id, product.name, product.code, product.categories, product.image, product.price, stock.stock 
-								FROM product INNER JOIN stock ON product.code = stock.code 
-								WHERE product.categories = 'Mask' ORDER BY id ASC");
-	if (!empty($product_array)) { 
-		foreach($product_array as $key=>$value){
-	?>
-		<div class="product-item fade-up">
-			<form id="frmCart">
-			<div class="product-image"><img src="<?php echo $product_array[$key]["image"]; ?>" width="200px" height="200px"></div>
-			<div><strong><?php echo $product_array[$key]["name"]; ?></strong></div>
-			<div class="product-price"><?php echo "$".$product_array[$key]["price"]; ?></div>
-			<div class="product-price"><?php echo "Stock: ".$product_array[$key]["stock"]; ?></div>
-			<div class="product-price"><?php echo "Product Code: ".$product_array[$key]["code"]; ?></div>
-			<div><div><input type="text" class="quan_input" id="qty_<?php echo $product_array[$key]["code"]; ?>" name="quantity" value="1" size="2" /></div>
-			<?php
-				$in_session = "0";
-				if(!empty($_SESSION["cart_item"])) {
-					$session_code_array = array_keys($_SESSION["cart_item"]);
-				    if(in_array($product_array[$key]["code"],$session_code_array)) {
-						$in_session = "1";
-				    }
+<div class="row">				
+	<div class="cart-popup" id="myCart">
+		<div class="row">
+			<div style="width: auto;"><h2>Your bag</h2></div>
+			<div class="text-muted count_items  p-l-20" id="cart-info">
+				<?php
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo "0"; 
 				}
-			if($product_array[$key]["stock"] > 0){
-			?>
-			<input type="button" id="add_<?php echo $product_array[$key]["code"]; ?>" value="Add to cart" class='btnAddAction login100-form-btn' cart-action" onClick = "cartAction('add', '<?php echo $product_array[$key]["id"]; ?>', '<?php echo $product_array[$key]["code"]; ?>', '<?php echo $product_array[$key]["stock"]; ?>')" <?php if($in_session != "0") { ?>style="display:none" <?php } ?> />
-			<input type="button" id="added_<?php echo $product_array[$key]["code"]; ?>" value="Added" class='btnAdded profile-edit-btn' <?php if($in_session != "1") { ?>style="display:none" <?php } ?> />
-			<?php
-			}else{}
-			?>
-			</div>
-			</form>
+				?> Items
+				</div>
 		</div>
-	<?php
-			}
-	}
-	?>
-          </div>
-		  
-          <div class="portfolio-item filter-card">
-			<div class="line"><h2>Gold Mask</h2></div>
-	<?php
-	$product_array = runQuery("SELECT product.id, product.name, product.code, product.categories, product.image, product.price, stock.stock 
-								FROM product INNER JOIN stock ON product.code = stock.code 
-								WHERE product.categories = 'gold mask' ORDER BY id ASC");
-	if (!empty($product_array)) { 
-		foreach($product_array as $key=>$value){
-	?>
-		<div class="product-item">
-			<form id="frmCart">
-			<div class="product-image"><img src="<?php echo $product_array[$key]["image"]; ?>" width="200px" height="200px"></div>
-			<div><strong><?php echo $product_array[$key]["name"]; ?></strong></div>
-			<div class="product-price"><?php echo "$".$product_array[$key]["price"]; ?></div>
-			<div class="product-price"><?php echo "Stock: ".$product_array[$key]["stock"]; ?></div>
-			<div class="product-price"><?php echo "Product Code: ".$product_array[$key]["code"]; ?></div>
-			<div><div><input type="text" class="quan_input" id="qty_<?php echo $product_array[$key]["code"]; ?>" name="quantity" value="1" size="2" /></div>
-			<?php
-				$in_session = "0";
-				if(!empty($_SESSION["cart_item"])) {
-					$session_code_array = array_keys($_SESSION["cart_item"]);
-				    if(in_array($product_array[$key]["code"],$session_code_array)) {
-						$in_session = "1";
-				    }
+		<div class="cart-item" id="cart-item"></div>
+		
+	</div>
+
+<div>
+	<div class="checkoutbox">
+		<div class="checkout-wrap">
+			<div class="m-b-10"><input type="submit" name="checkout" value="Checkout" class="login100-form-btn"/></div>
+			<div class="text-uppercase p-b-20"><strong>ORDER SUMMARY:</strong></div>
+			<div class="checkout-summary">
+			<div class="text-muted text-uppercase count_items" id="cart-info1">
+				<?php
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo "0"; 
 				}
-			
-			if($product_array[$key]["stock"] > 0){
-			?>
-			<input type="button" id="add_<?php echo $product_array[$key]["code"]; ?>" value="Add to cart" class='btnAddAction login100-form-btn' cart-action" onClick = "cartAction('add', '<?php echo $product_array[$key]["id"]; ?>', '<?php echo $product_array[$key]["code"]; ?>', '<?php echo $product_array[$key]["stock"]; ?>')" <?php if($in_session != "0") { ?>style="display:none" <?php } ?> />
-			<input type="button" id="added_<?php echo $product_array[$key]["code"]; ?>" value="Added" class='btnAdded profile-edit-btn' <?php if($in_session != "1") { ?>style="display:none" <?php } ?> />
-			<?php
-			}else{}
-			?>
+				?>
+				</div>
+			<div id="producttotal">
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>Product total:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="price">RM
+							<?php
+							if(isset($_SESSION["cart_item"])){
+								$item_total = 0;
+									
+								foreach ($_SESSION["cart_item"] as $item){
+									$item_total += ($item["price"]*$item["quantity"]);
+								}
+								echo $item_total;
+							}
+							?> 
+						</p>
+                    </div>
+				</div>
+
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>Delivery:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="delivery">Free</p>
+                    </div>
+				</div>
+				
+				<div class="row p-b-30">
+                    <div class="col-md-6">
+                        <label>GST:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="gst">6%</p>
+                    </div>
+				</div>
+				
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>Total Amount:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="producttotaltax">RM
+							<?php
+							if(isset($_SESSION["cart_item"])){
+								$item_total = 0;
+									
+								foreach ($_SESSION["cart_item"] as $item){
+									$item_total += ($item["price"]*$item["quantity"]);
+								}
+								$tax = ($item_total/100)*6;
+								echo ($item_total+$tax);
+							}
+							?> 
+						</p>
+                    </div>
+				</div>
 			</div>
-			</form>
+			</div>
+			<div class="m-t-10"><a href="#" id="btnEmpty" class="cart-action login100-form-btn" onClick="cartAction('empty','','', '');">Empty Cart</a></div>
 		</div>
-	<?php
-			}
-	}
-	?>
-          </div>
-
-          <div class="portfolio-item filter-logo w3-animate-zoom">
-			<div class="line"><h2>Packages</h2></div>
-	<?php
-	$product_array = runQuery("SELECT product.id, product.name, product.code, product.categories, product.image, product.price, stock.stock 
-								FROM product INNER JOIN stock ON product.code = stock.code 
-								WHERE product.categories = 'packages' ORDER BY id ASC");
-	if (!empty($product_array)) { 
-		foreach($product_array as $key=>$value){
-	?>
-		<div class="product-item">
-			<form id="frmCart">
-			<div class="product-image"><img src="<?php echo $product_array[$key]["image"]; ?>" width="200px" height="200px"></div>
-			<div><strong><?php echo $product_array[$key]["name"]; ?></strong></div>
-			<div class="product-price"><?php echo "$".$product_array[$key]["price"]; ?></div>
-			<div class="product-price"><?php echo "Stock: ".$product_array[$key]["stock"]; ?></div>
-			<div class="product-price"><?php echo "Product Code: ".$product_array[$key]["code"]; ?></div>
-			<div><div><input type="text" class="quan_input" id="qty_<?php echo $product_array[$key]["code"]; ?>" name="quantity" value="1" size="2" /></div>
-			<?php
-				$in_session = "0";
-				if(!empty($_SESSION["cart_item"])) {
-					$session_code_array = array_keys($_SESSION["cart_item"]);
-				    if(in_array($product_array[$key]["code"],$session_code_array)) {
-						$in_session = "1";
-				    }
-				}
-			if($product_array[$key]["stock"] > 0){
-			?>
-			<input type="button" id="add_<?php echo $product_array[$key]["code"]; ?>" value="Add to cart" class='btnAddAction login100-form-btn' cart-action" onClick = "cartAction('add', '<?php echo $product_array[$key]["id"]; ?>', '<?php echo $product_array[$key]["code"]; ?>', '<?php echo $product_array[$key]["stock"]; ?>')" <?php if($in_session != "0") { ?>style="display:none" <?php } ?> />
-			<input type="button" id="added_<?php echo $product_array[$key]["code"]; ?>" value="Added" class='btnAdded profile-edit-btn' <?php if($in_session != "1") { ?>style="display:none" <?php } ?> />
-			<?php
-			}else{}
-			?>
+	</div>
+	<!--
+	<div class="promotbox">
+		<div class="p-t-10">
+			<div class="promobox-summary" id="openPromo">
+				<strong>Promo Code</strong>
 			</div>
-			</form>
-		</div>
-	<?php
-			}
-	}
-	?>
-          </div>
-
-          <div class="portfolio-item filter-web w3-animate-zoom">
-			<div class="line"><h2>Others</h2></div>
-				<h4>Coming soon...</h4>
-          </div>
-		  
-        </div>
-
-      </div>
-    </section><!-- #portfolio -->
-
-<!--
-	<div class="cart-popup w3-animate-right" id="myCart">
-	<button type="button" id="closeCart" class="cancel">Close</button>
-		<div class="cart-back-wrap">
-			<h5 class="text-uppercase">Shopping Cart</h5>	
-			<div id="shopping-cart">
-				<div id="cart-item"></div>
-			</div>
-			<div class="m-b-10"><a href="checkout.php" class="login100-form-btn">Checkout</a></div>
-			<div class="m-b-10"><a id="btnEmpty" class="cart-action login100-form-btn" onClick="cartAction('empty','','');">Empty Cart</a></div>
 		</div>
 	</div>
 
-	
+	<div class="promotbox-content" id="myPromo">
+		<div class="">
+			<div class="m-b-10 promobox-content-summary">
+				<div class="m-b-10"><a href="#" class="login100-form-btn">Apply</a></div>
+					<div class="wrap-input100 validate-input">
+						<input placeholder="promo code..." id="promo" name="pword" type="text" class="input100 container-margin">
+						<span class="focus-input100"></span>
+					</div>
+			</div>
+		</div>
+	</div>-->
+</div>
+</div>
+		<div style="width: 300px; margin-left: auto; margin-right: auto;">
+			<div><input type="submit" name="checkout" value="Checkout" class="login100-form-btn"/></div>
+		</div>
+      </div>
+	  </form>
+    </section><!-- #portfolio -->
+
 <script>
 $(document).ready(function () {
-	cartAction('','','');
+	cartAction('','','', '');
 })
 </script>
--->
+
     <!-- Footer -->
     <footer>
       <div class="container">
@@ -440,7 +496,6 @@ $(document).ready(function () {
         </div>
       </div>
     </footer>
-
 
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
@@ -492,4 +547,11 @@ $(document).ready(function () {
 		}
 	}
 	}
+</script>
+<script>
+$(document).ready(function(){
+    $("#openPromo").click(function(){
+        $("#myPromo").toggle();
+    });
+});
 </script>

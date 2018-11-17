@@ -1,72 +1,7 @@
-<?php  
-//Start the Session
+<?php
    session_start();
 
    include 'connection_file.php';
-   
-   if(isset($_POST['login'])){
-	   	if (isset($_POST['LoginID']) and isset($_POST['Password'])){
-			//then
-			$username = $_POST['LoginID'];
-			$password = ($_POST['Password']);
-			$query = "SELECT * FROM `login` WHERE username='$username' and Password='$password'";
-		
-			$result = mysqli_query($conn, $query) or die(mysqli_error($conn));
-			$count = mysqli_num_rows($result);
-			
-			//if equal to server 
-			if ($count == 1){
-				$loginquery = "SELECT * FROM `login` WHERE username = '$username'";
-	
-				if ($result = mysqli_query($conn,$loginquery)){
-					// Fetch one and one row
-					while ($row = mysqli_fetch_row($result)){
-						$_SESSION['admin'] = $row[8];
-					}
-				}
-			
-				$_SESSION['LoginID'] = $username;
-				header('Location: index.php');
-			}else{
-				//else invalid
-				phpAlert("Invalid ID or Password");
-			}
-		
-		}
-   }
-   
-   
-   /*
-	//If login
-	if (isset($_SESSION['LoginID'])){
-		phpAlert("Already Login");
-		header('Location: index.php');
-	}else{
-		
-	if (isset($_POST['LoginID']) and isset($_POST['Password'])){
-		//then
-		$LoginID = $_POST['LoginID'];
-		$password = sha1($_POST['Password']);
-	
-	//select database fomr server
-
-		$query = "SELECT * FROM `login` WHERE AgentID='$LoginID' and Password='$password'";
-
-		$result = mysqli_query($conn, $query) or die(mysqli_error($conn));
-		$count = mysqli_num_rows($result);
-		
-	//if equal to server 
-	if ($count == 1){
-		$_SESSION['LoginID'] = $LoginID;
-		header('Location: index.php');
-	}else{
-		//else invalid
-		phpAlert("Invalid ID or Password");
-	}
-	
-	}
-}
-*/
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +13,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
+	<link rel="stylesheet" type="text/css" href="css/style2.css" />
+	
     <title>ROYARY Resources</title>
 	<!-- Favicons -->
 	<link href="img/icons/RoyaryResources-4.png" rel="icon">
@@ -92,11 +28,11 @@
     <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
-
+  
     <!-- Custom styles for this template -->
     <link href="css/agency.css" rel="stylesheet">
 	<link href="css/sidebar.css" rel="stylesheet">
-
+	
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.css">
 	<!--===============================================================================================-->
@@ -111,50 +47,12 @@
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<!--===============================================================================================-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
+
   </head>
 
   <body id="page-top">
-<style>
-.dropbtn {
-    background-color: rgba(0, 0, 0, .1);
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
-
-.dropbtn:hover, .dropbtn:focus {
-    background-color: rgba(0, 0, 0, .6);
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown a:hover {background-color: #ddd}
-
-.show {display:block;}
-</style>
-
+ 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
 
@@ -198,7 +96,7 @@
 			<!-- cart -->
 			<ul class="navbar-nav text-uppercase">
 			<li class="nav-item open-cart-button cart-dropdown"><a href="order.php"><i class="fa fa-shopping-cart" style="font-size:24px"></i>
-				<i id="cart_count"><?php 
+				<i id="cart-count"><?php 
 				if(isset($_SESSION["cart_item"])){
 					echo count($_SESSION["cart_item"]); 
 				}else{
@@ -223,70 +121,85 @@
         </div>
       </div>
     </nav>
-
-    <!-- Header -->
-
-
-    <!-- Login -->
-    <section class="py-0">
-	<div class="limiter">
-		<div class="container-login100">
-			<div class="wrap-login100">
-				<div class="login100-pic js-tilt" data-tilt>
-					<img src="img/icons/img-01.png" alt="IMG">
+	
+    <!-- Description -->
+    <section class="" id="services">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+			<img src="img/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
+            <h2 class="section-heading text-uppercase">Description</h2>
+            <h3 class="section-subheading text-muted">Let science revolutionize your skincare routine. Founded by a group of Korean cosmetic surgeons and dermatologists, Regen is a medical beauty group which specialises in formulating effective products that deliver clinically proven results.</h3>
+			<div class="m-b-50"><img class="col-lg-4" src="img/portfolio/4a41d0f2-0b42-4bf5-907f-5ede06db78d9.jpg"></img></div>
+			<div class="m-b-50">
+				<h2>YOUR V LINE SOLUTION</h2>
+				<h6>A good percentage of the beauty trends we see come out of Korea are effective. Most are, at the very least, quite intriguing—this curiosity is definitely a large part of what has driven the K-beauty craze to peak levels this year. (That and the impossibly flawless complexion of the average Korean woman, of course.)
+				So whenever we hear of a new fad taking Seoul by storm, needless to say, we're going to do everything we can to try it. And that, folks, is how V-masks made their way to the Byrdie offices. Like under-eye patches for your chin, these sheets promise a sharper, firmer jawline, no surgery needed. But do they actually get the job done? We had to find out.</h6>
+			</div>
+		  </div>
+        </div>
+        <div class="row text-center">
+				 
+          <div class="col-md-4">
+            <span class="fa-stack fa-4x">
+              <i class="fa fa-circle fa-stack-2x text-primary"></i>
+              <i class="fa fa-tags fa-stack-1x fa-inverse"></i>
+            </span>
+            <h4 class="service-heading">Web Security</h4>
+            <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
+          </div>
+          <div class="col-md-4">
+            <span class="fa-stack fa-4x">
+              <i class="fa fa-circle fa-stack-2x text-primary"></i>
+              <i class="fa fa-tags fa-stack-1x fa-inverse"></i>
+            </span>
+            <h4 class="service-heading">Step 1: <span style="color:yellow;">Upper Face Mask.</h4>
+            <p class="text-muted">(4 types: Moisturizing, Whitening, Pore, Wrinkle) Different type of mask promotes different function as described. Choose the one which suits your skin condition.</p>
+          </div>
+          <div class="col-md-4">
+            <span class="fa-stack fa-4x">
+              <i class="fa fa-circle fa-stack-2x text-primary"></i>
+              <i class="fa fa-tags fa-stack-1x fa-inverse"></i>
+            </span>
+            <h4 class="service-heading">Step 2: <span style="color:yellow;">Lower Face Mask.</h4>
+            <p class="text-muted">Extracts from Halophyte, an organism which thrives in very salty environments, help eliminate bloating and water retention. The concept is simple, osmotic pressure created by the hypertonic environment lifts out excess water that bulks your face. The end result? A gorgeously slim V-line face with 91.5 degree angles, the "golden" measurement for a beautiful visage.</p>
+          </div>
+		  
+          <div class="col-md-4">
+            <span class="fa-stack fa-4x">
+              <i class="fa fa-circle fa-stack-2x text-primary"></i>
+              <i class="fa fa-tags fa-stack-1x fa-inverse"></i>
+            </span>
+            <h4 class="service-heading">Web Security</h4>
+            <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+	
+	<section class="bg-light" id="describtion">
+		<div>
+		<div class="col-lg-12">
+			<div class="container">
+				<div class="text-center">
+				<img src="img/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
+				<h2 class="section-heading text-uppercase">Description</h2>
+				<h3 class="section-subheading text-muted">Let science revolutionize your skincare routine. Founded by a group of Korean cosmetic surgeons and dermatologists, Regen is a medical beauty group which specialises in formulating effective products that deliver clinically proven results.</h3>
+				<div><h5>Regen 2 Step Synergy Effect V Mask</h5>
+				<h3 class="text-muted m-b-50">consists of 2 Steps:</h3>
+				<img class="col-lg-4" src="img/portfolio/4a41d0f2-0b42-4bf5-907f-5ede06db78d9.jpg"></img>
 				</div>
-				<form class="login100-form validate-form" action="" method="POST">
-					<span class="login100-form-title">
-						Sign In
-					</span>
-
-					<div class="wrap-input100 validate-input" data-validate = "Login ID is required: ex@abc.xyz">
-						<input class="input100" type="text" name="LoginID" placeholder="User ID">
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-address-card-o" aria-hidden="true"></i>
-						</span>
+				</div>
+				
+				<div><h6>Step 1: <span style="color:yellow;">Upper Face Mask.</span></h6> <h3 class="section-subheading text-muted">(4 types: Moisturizing, Whitening, Pore, Wrinkle) Different type of mask promotes different function as described. Choose the one which suits your skin condition.</h3></div>
+				<div><h6>Step 2: <span style="color:yellow;">Lower Face Mask.</span></h6> <h3 class="section-subheading text-muted">Extracts from Halophyte, an organism which thrives in very salty environments, help eliminate bloating and water retention. The concept is simple, osmotic pressure created by the hypertonic environment lifts out excess water that bulks your face. The end result? A gorgeously slim V-line face with 91.5 degree angles, the "golden" measurement for a beautiful visage.</h3></div>
 					</div>
-
-					<div class="wrap-input100 validate-input" data-validate = "Password is required">
-						<input class="input100" type="password" name="Password" placeholder="Password">
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
-					
-					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" type="submit" name="login">
-							Login
-						</button>
-					</div>
-					
-					<!-- forget ID
-					<div class="text-center p-t-12">
-						<span class="txt1">
-							Forgot
-						</span>
-						<a class="txt2" href="#">
-							Username / Password?
-						</a>
-					</div>
-					-->
-
-					<div class="text-center p-t-136">
-						<span class="login100-form-title">
-							Sign Up Now
-						</span>
-						<a class="txt2" href="register.php">
-							Create your Account
-							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
-						</a>
-					</div>
-				</form>
+				</div>
 			</div>
 		</div>
-	</div>
-    </section>
+		</div>
+	</section>
+
 
     <!-- Footer -->
     <footer>
@@ -328,23 +241,6 @@
       </div>
     </footer>
 
-	<!--===============================================================================================-->	
-	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-	<!--===============================================================================================-->
-	<script src="vendor/bootstrap/js/popper.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-	<!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
-	<!--===============================================================================================-->
-	<script src="vendor/tilt/tilt.jquery.min.js"></script>
-	<script >
-		$('.js-tilt').tilt({
-			scale: 1.1
-		})
-	</script>
-	<!--===============================================================================================-->
-	<script src="js/main.js"></script>
-
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -359,7 +255,11 @@
     <!-- Custom scripts for this template -->
     <script src="js/agency.min.js"></script>
 	<script src="js/sidebar.js"></script>
-	<script>
+	
+  </body>
+
+</html>
+<script>
 	/* When the user clicks on the button, 
 	toggle between hiding and showing the dropdown content */
 	function myFunction() {
@@ -380,7 +280,4 @@
 		}
 	}
 	}
-	</script>
-  </body>
-
-</html>
+</script>

@@ -1,6 +1,6 @@
 <?php
-$connection = mysqli_connect("", "root", "", "company");
-if (!$connection){
+$conn = mysqli_connect("", "root", "", "company");
+if (!$conn){
     die("Database Connection Failed" . mysqli_error($connection));
 }
 	  

@@ -17,7 +17,7 @@
 	
     <title>ROYARY Resources</title>
 	<!-- Favicons -->
-	<link href="images/icons/RoyaryResources-4.png" rel="icon">
+	<link href="img/icons/RoyaryResources-4.png" rel="icon">
 
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -32,6 +32,22 @@
     <!-- Custom styles for this template -->
     <link href="css/agency.css" rel="stylesheet">
 	<link href="css/sidebar.css" rel="stylesheet">
+	
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+	<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<!--===============================================================================================-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
 
   </head>
 
@@ -39,13 +55,7 @@
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
-	<?php
-		sidebar();
-		
-	if (isset($_SESSION['LoginID'])){
-      echo '<span style="font-size:30px;cursor:pointer" onclick="openNav()" class="sideBar">&#9776; </span>';
-	}
-	?>
+
       <div class="container">	
         <a class="navbar-brand js-scroll-trigger" href="index.php">ROYARY Resources</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,126 +63,72 @@
           <i class="fa fa-bars"></i>
         </button>
 		
-	<?php
-
-		  if (!isset($_SESSION["LoginID"])){
-          echo "<a class='btn btn-primary text-uppercase js-scroll-trigger' href='login.php'>Sign In</a>&nbsp;";
-		  
-		  echo "<a class='btn btn-primary text-uppercase js-scroll-trigger' href='register.php'>Sign Up</a>";
-		  }else{
-
-		echo '<div id="guest">';
-			navBar();
-		echo '</div>';
-		  }
-	  ?>
-		
         <div class="collapse navbar-collapse" id="navbarResponsive">
+		<div id="guest">
+	    <?php 
+			navbar();
+		?>	
+		</div>
+		
           <ul class="navbar-nav text-uppercase ml-auto">
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#home">Home</a>
+              <a class="nav-link" href="index.php">Home</a>
+            </li>
+            <li class="nav-item product-dropdown">
+              <a class="nav-link ">Products</a>
+			  	<div class="product-dropdown-content">
+					<a href="cart.php">Mask</a>
+					<a href="#">coming soon</a>
+				</div>
+            </li>
+            <li class="nav-item about-dropdown">
+              <a class="nav-link js-scroll-trigger" href="#">About</a>
+				<div class="about-dropdown-content">
+					<a href="about.php">About us</a>
+					<a href="about_product.php">About product</a>
+				</div>
             </li>
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#portfolio">Products</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link js-scroll-trigger about_dropdown" href="#about">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
+              <a class="nav-link js-scroll-trigger" href="index.php">Contact</a>
             </li>
           </ul>
+		  
+			<!-- cart -->
+			<ul class="navbar-nav text-uppercase">
+			<li class="nav-item open-cart-button cart-dropdown"><a href="order.php"><i class="fa fa-shopping-cart" style="font-size:24px"></i>
+				<i id="cart-count"><?php 
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo 0; 
+				}
+				?></i>
+			</a></li>
+			<li class="nav-item open-cart-button news-dropdown"><a href="news.php"><i class="fa fa-columns" style="font-size:24px"></i></a></li>
+			</ul>
+			<!--
+			<div class="count_items" id="cart-info">
+				<?php 
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo 0; 
+				}
+				?>
+			</div>
+			-->
+			<!-- cart -->
         </div>
       </div>
     </nav>
-	
 
-    <!-- Description -->
-	<!--
-    <section class="" id="services">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
-			<img src="images/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
-            <h2 class="section-heading text-uppercase">Description</h2>
-            <h3 class="section-subheading text-muted">Let science revolutionize your skincare routine. Founded by a group of Korean cosmetic surgeons and dermatologists, Regen is a medical beauty group which specialises in formulating effective products that deliver clinically proven results.</h3>
-			<div><img class="col-lg-4 margin-down float-left" src="img/portfolio/4a41d0f2-0b42-4bf5-907f-5ede06db78d9.jpg"></img>
-			<h2>YOUR V LINE SOLUTION</h2>
-			<h6>A good percentage of the beauty trends we see come out of Korea are effective. Most are, at the very least, quite intriguing—this curiosity is definitely a large part of what has driven the K-beauty craze to peak levels this year. (That and the impossibly flawless complexion of the average Korean woman, of course.)
-				So whenever we hear of a new fad taking Seoul by storm, needless to say, we're going to do everything we can to try it. And that, folks, is how V-masks made their way to the Byrdie offices. Like under-eye patches for your chin, these sheets promise a sharper, firmer jawline, no surgery needed. But do they actually get the job done? We had to find out.</h6>
-			</div>
-		  </div>
-        </div>
-        <div class="row text-center">
-				  <!--
-          <div class="col-md-4">
-            <span class="fa-stack fa-4x">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-tags fa-stack-1x fa-inverse"></i>
-            </span>
-            <h4 class="service-heading">Web Security</h4>
-            <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
-          </div>
-          <div class="col-md-4">
-            <span class="fa-stack fa-4x">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-tags fa-stack-1x fa-inverse"></i>
-            </span>
-            <h4 class="service-heading">Step 1: <span style="color:yellow;">Upper Face Mask.</h4>
-            <p class="text-muted">(4 types: Moisturizing, Whitening, Pore, Wrinkle) Different type of mask promotes different function as described. Choose the one which suits your skin condition.</p>
-          </div>
-          <div class="col-md-4">
-            <span class="fa-stack fa-4x">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-tags fa-stack-1x fa-inverse"></i>
-            </span>
-            <h4 class="service-heading">Step 2: <span style="color:yellow;">Lower Face Mask.</h4>
-            <p class="text-muted">Extracts from Halophyte, an organism which thrives in very salty environments, help eliminate bloating and water retention. The concept is simple, osmotic pressure created by the hypertonic environment lifts out excess water that bulks your face. The end result? A gorgeously slim V-line face with 91.5 degree angles, the "golden" measurement for a beautiful visage.</p>
-          </div>
-		  <!--
-          <div class="col-md-4">
-            <span class="fa-stack fa-4x">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-tags fa-stack-1x fa-inverse"></i>
-            </span>
-            <h4 class="service-heading">Web Security</h4>
-            <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-	
-	<!-- Description
-	<section class="describtion" id="describtion">
-		<div>
-		<div class="col-lg-12">
-			<div class="container">
-				<div class="text-center">
-				<img src="images/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
-				<h2 class="section-heading text-uppercase">Description</h2>
-				<h3 class="section-subheading text-muted">Let science revolutionize your skincare routine. Founded by a group of Korean cosmetic surgeons and dermatologists, Regen is a medical beauty group which specialises in formulating effective products that deliver clinically proven results.</h3>
-				<div><h5>Regen 2 Step Synergy Effect V Mask</h5>
-				<h3 class="text-muted">consists of 2 Steps:</h3></div>
-				</div>
-				<div><img class="col-lg-4 float-left margin-down" src="img/portfolio/4a41d0f2-0b42-4bf5-907f-5ede06db78d9.jpg"></img></div>
-				</br>
-				<div><div class="float-left padding-logo"><img class="border-rad" src="images/icons/numbers-one-in-ribbons-collection_1207-84.jpg"></img></div>
-				<div><h6>Step 1: <span style="color:yellow;">Upper Face Mask.</span></h6> <h3 class="section-subheading text-muted">(4 types: Moisturizing, Whitening, Pore, Wrinkle) Different type of mask promotes different function as described. Choose the one which suits your skin condition.</h3></div></div>
-				</br>
-				<div><div class="float-left padding-logo"><img class="border-rad" src="images/icons/numbers-two-in-ribbons-collection_1207-84.jpg"></img></div>
-				<h6>Step 2: <span style="color:yellow;">Lower Face Mask.</span></h6> <h3 class="section-subheading text-muted">Extracts from Halophyte, an organism which thrives in very salty environments, help eliminate bloating and water retention. The concept is simple, osmotic pressure created by the hypertonic environment lifts out excess water that bulks your face. The end result? A gorgeously slim V-line face with 91.5 degree angles, the "golden" measurement for a beautiful visage.</h3></div>
-			</div>
-		</div>
-		</div>
-	</section>
-	Description -->
 	
     <!-- About -->
     <section id="about">
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-center">
-			<img src="images/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
+			<img src="img/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
             <h2 class="section-heading text-uppercase">About</h2>
             <h3 class="section-subheading text-muted">ROYARY RESOURCES</h3>
           </div>
@@ -261,17 +217,18 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-center">
-			<img src="images/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
+			<img src="img/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
             <h2 class="section-heading text-uppercase">Our Amazing Team</h2>
             <h3 class="section-subheading text-muted">Regen.</h3>
           </div>
         </div>
         <div class="row">
+		
           <div class="col-sm-4">
             <div class="team-member">
-              <img class="mx-auto rounded-circle" src="img/team/1798720_808684215855646_7566589140677885849_n.jpg" alt="">
-              <h4>Tze Hao</h4>
-              <p class="text-muted">product Leader</p>
+              <img class="mx-auto rounded-circle" src="img/team/15439955_1483581385003537_5496940474116500076_n.jpg" alt="">
+              <h4>Torrent Teo</h4>
+              <p class="text-muted">CEO</p>
               <ul class="list-inline social-buttons">
                 <li class="list-inline-item">
                   <a href="#">
@@ -279,7 +236,7 @@
                   </a>
                 </li>
                 <li class="list-inline-item">
-                  <a href="https://web.facebook.com/hao.tze" target="_blank">
+                  <a href="https://www.facebook.com/torrent.teo" target="_blank">
                     <i class="fa fa-facebook"></i>
                   </a>
                 </li>
@@ -291,10 +248,11 @@
               </ul>
             </div>
           </div>
+		  
           <div class="col-sm-4">
             <div class="team-member">
-              <img class="mx-auto rounded-circle" src="img/team/10410425_10152616904762434_7877385868301943981_n.jpg" alt="">
-              <h4>Chun Kit</h4>
+              <img class="mx-auto rounded-circle" src="img/team/35812667_1907113839339743_1307907078815219712_n.jpg" alt="">
+              <h4>Hong Yew</h4>
               <p class="text-muted">Product Leader</p>
               <ul class="list-inline social-buttons">
                 <li class="list-inline-item">
@@ -303,7 +261,60 @@
                   </a>
                 </li>
                 <li class="list-inline-item">
-                  <a href="https://web.facebook.com/lee.c.kit.16?ref=br_rs" target="_blank">
+                  <a href="https://www.facebook.com/hong.yew.79?lst=100002238537085%3A100001234358699%3A1540545875" target="_blank">
+                    <i class="fa fa-facebook"></i>
+                  </a>
+                </li>
+                <li class="list-inline-item">
+                  <a href="#">
+                    <i class="fa fa-linkedin"></i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+		  
+          <div class="col-sm-4">
+            <div class="team-member">
+              <img class="mx-auto rounded-circle" src="img/team/16473886_928898287212770_5572192589815477435_n.jpg" alt="">
+              <h4>Leonard Ho</h4>
+              <p class="text-muted">Product Leader</p>
+              <ul class="list-inline social-buttons">
+                <li class="list-inline-item">
+                  <a href="#">
+                    <i class="fa fa-twitter"></i>
+                  </a>
+                </li>
+                <li class="list-inline-item">
+                  <a href="https://www.facebook.com/LeonardHo900?lst=100002238537085%3A100002778239139%3A1540545916" target="_blank">
+                    <i class="fa fa-facebook"></i>
+                  </a>
+                </li>
+                <li class="list-inline-item">
+                  <a href="#">
+                    <i class="fa fa-linkedin"></i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+		
+        <div class="row">
+		
+          <div class="col-sm-4">
+            <div class="team-member">
+              <img class="mx-auto rounded-circle" src="img/team/11208630_962351483797530_4551077665045225745_n.jpg" alt="">
+              <h4>Jeremy Leong</h4>
+              <p class="text-muted">product Leader</p>
+              <ul class="list-inline social-buttons">
+                <li class="list-inline-item">
+                  <a href="#">
+                    <i class="fa fa-twitter"></i>
+                  </a>
+                </li>
+                <li class="list-inline-item">
+                  <a href="https://www.facebook.com/jeremy.leong3?lst=100002238537085%3A100000680623328%3A1540545964" target="_blank">
                     <i class="fa fa-facebook"></i>
                   </a>
                 </li>
@@ -340,8 +351,8 @@
               </ul>
             </div>
           </div>
-		  
         </div>
+		
         <div class="row">
           <div class="col-lg-8 mx-auto text-center">
             <p class="large text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut eaque, laboriosam veritatis, quos non quis ad perspiciatis, totam corporis ea, alias ut unde.</p>
@@ -389,7 +400,6 @@
         </div>
       </div>
     </footer>
-
 
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>

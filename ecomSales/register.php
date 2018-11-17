@@ -46,6 +46,10 @@
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<!--===============================================================================================-->
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
+    <script type="text/javascript" src="check.js"></script>
+	
   </head>
 
   <body id="page-top">
@@ -99,21 +103,69 @@ input.invalid {
 </style>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
-	
-      <div class="container">
-		<a class="navbar-brand js-scroll-trigger" href="index.php">ROYARY Resources</a>
-	  
+
+      <div class="container">	
+        <a class="navbar-brand js-scroll-trigger" href="index.php">ROYARY Resources</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           Menu
           <i class="fa fa-bars"></i>
         </button>
 		
         <div class="collapse navbar-collapse" id="navbarResponsive">
+		<div id="guest">
+	    <?php 
+			navbar();
+		?>	
+		</div>
+		
           <ul class="navbar-nav text-uppercase ml-auto">
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="index.php">Home</a>
+              <a class="nav-link" href="index.php">Home</a>
+            </li>
+            <li class="nav-item product-dropdown">
+              <a class="nav-link ">Products</a>
+			  	<div class="product-dropdown-content">
+					<a href="cart.php">Mask</a>
+					<a href="#">coming soon</a>
+				</div>
+            </li>
+            <li class="nav-item about-dropdown">
+              <a class="nav-link js-scroll-trigger" href="#">About</a>
+				<div class="about-dropdown-content">
+					<a href="about.php">About us</a>
+					<a href="about_product.php">About product</a>
+				</div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="index.php">Contact</a>
             </li>
           </ul>
+		  
+			<!-- cart -->
+			<ul class="navbar-nav text-uppercase">
+			<li class="nav-item open-cart-button cart-dropdown"><a href="order.php"><i class="fa fa-shopping-cart" style="font-size:24px"></i>
+				<i id="cart_count"><?php 
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo 0; 
+				}
+				?></i>
+			</a></li>
+			<li class="nav-item open-cart-button news-dropdown"><a href="news.php"><i class="fa fa-columns" style="font-size:24px"></i></a></li>
+			</ul>
+			<!--
+			<div class="count_items" id="cart-info">
+				<?php 
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo 0; 
+				}
+				?>
+			</div>
+			-->
+			<!-- cart -->
         </div>
       </div>
     </nav>
@@ -133,9 +185,15 @@ input.invalid {
 				<!-- One "tab" for each step in the form: -->
 				<div class="tab container-margin">Login Info:
 					<div class="wrap-input100 validate-input">
-						<input placeholder="Username..." name="uname" class="input100 container-margin" maxlength="20">
+						<input placeholder="Username..." name="uname" id="userid" class="input100 container-margin" maxlength="20">
 						<span class="focus-input100"></span>
 					</div>
+					
+				<div id="status">
+					<?php if (isset($_GET['error'])): ?>
+						<!-- Display error when returning with error URL param? -->
+					<?php endif;?>
+				</div>	
 					
 					<div class="wrap-input100 validate-input">
 						<input placeholder="Password..." id="password" name="pword" type="password" class="input100 container-margin" maxlength="20">
@@ -152,32 +210,32 @@ input.invalid {
 				
 				<div class="tab container-margin">Name:
 					<div class="wrap-input100 validate-input">
-						<input placeholder="First name..." name="fname" class="input100 container-margin" maxlength="10">
+						<input placeholder="First name..." id="fname" name="fname" class="input100 container-margin" maxlength="10">
 						<span class="focus-input100"></span>
 					</div>
 				
 					<div class="wrap-input100 validate-input">
-						<input placeholder="Last name..." name="lname" class="input100 container-margin" maxlength="10">
+						<input placeholder="Last name..." id="lname" name="lname" class="input100 container-margin" maxlength="10">
 						<span class="focus-input100"></span>
 					</div>
 				</div>
 				
 				<div class="tab container-margin">Contact Info:
 					<div class="wrap-input100 validate-input">
-						<input placeholder="E-mail..." name="email" class="input100 container-margin" maxlength="50">
+						<input placeholder="E-mail..." id="email" name="email" class="input100 container-margin" maxlength="50">
 						<span class="focus-input100"></span>
 					</div>
 					
 					<div class="wrap-input100 validate-input">
-						<input placeholder="Phone..." name="phone" class="input100 container-margin">
+						<input placeholder="Phone..." id="contact" name="phone" class="input100 container-margin">
 						<span class="focus-input100"></span>
 					</div>
 				</div>
 				
 				<div style="overflow:auto;">
 					<div style="float:right;">
-					<button type="button" id="prevBtn" onclick="nextPrev(-1)" class="btn btn-primary prevBtn text-uppercase js-scroll-trigger">Previous</button>
-					<button type="button" id="nextBtn" onclick="nextPrev(1)" class="btn btn-primary text-uppercase js-scroll-trigger">Next</button>
+					<button type="button" id="prevBtn" onclick="nextPrev(-1)" class="login100-form-btn">Previous</button>
+					<button type="button" id="nextBtn" onclick="nextPrev(1)" class="login100-form-btn">Next</button>
 					</div>
 				</div>
 				<!-- Circles which indicates the steps of the form: -->
@@ -343,19 +401,31 @@ function nextPrev(n) {
 
 function validateForm() {
   // This function deals with validation of the form fields
-  var x, y, i, valid = true;
+  var x, y, i, valid = true, validation = true;
   x = document.getElementsByClassName("tab");
-  y = x[currentTab].getElementsByTagName("input");
+  y = x[currentTab].getElementsByTagName("input"),
+  userid = document.getElementById("userid"),
+  password = document.getElementById("password"),
+  fname = document.getElementById("fname"),
+  lname = document.getElementById("lname"),
+  email = document.getElementById("email"),
+  contact = document.getElementById("contact");
+  
   // A loop that checks every input field in the current tab:
-  for (i = 0; i < y.length; i++) {
-    // If a field is empty...
-    if (y[i].value == "" ) {
-      // add an "invalid" class to the field:
-      y[i].className += " invalid";
-      // and set the current valid status to false
-      valid = false;
-    }
+  if(userid.value.length <= 4){
+	  valid = false;
+  }else{
+	for (i = 0; i < y.length; i++) {
+		// If a field is empty...
+		if (y[i].value == "") {
+		// add an "invalid" class to the field:
+		y[i].className += " invalid";
+		// and set the current valid status to false
+		valid = false;
+		}
+	}
   }
+  
   // If the valid status is true, mark the step as finished and valid:
   if (valid) {
     document.getElementsByClassName("step")[currentTab].className += " finish";

@@ -3,60 +3,147 @@
 
    include 'connection_file.php';
    
-   if(isset($_POST['profile_edit_btn_active'])){
+   if(isset($_POST['profile_profile_btn'])){
 	   $username = $_SESSION['LoginID'];
-	   $fname_edit = $_POST['fname_edit'];
-	   $lname_edit = $_POST['lname_edit'];
-	   $email_edit = $_POST['email_edit'];
-	   $phone_edit = $_POST['phone_edit'];
 	   
-	   $query_edit = "UPDATE `login` SET `fname`='$fname_edit',`lname`='$lname_edit',`email`='$email_edit',`phone`='$phone_edit' WHERE username = '$username'";
-	   
-	if (mysqli_query($conn, $query_edit)) {
-		header("Refresh:0");
-	} else {
-		phpAlert('Invalid Information');
-		header("Refresh:0");
-	}
-   
-   }
-   
-   if(isset($_POST['profile_address_1_btn_active'])){
-	   $username = $_SESSION['LoginID'];
-	   $address_edit_1 = $_POST['address_1'];
-	   $city_edit_1 = $_POST['city_1'];
-	   $state_edit_1 = $_POST['state_1'];
-	   $postcode_edit_1 = $_POST['postcode_1'];
-	   
-	   $query_edit_1 = "UPDATE `user_address` SET `address`='$address_edit_1',`city`='$city_edit_1',`state`='$state_edit_1',`postcode`='$postcode_edit_1' WHERE username = '$username' AND addnum = '1'";
-	   
-	if (mysqli_query($conn, $query_edit_1)) {
-		header("Refresh:0");
-	} else {
-		phpAlert('Invalid Information');
-		header("Refresh:0");
-	}
-   
-   }
-   
-   if(isset($_POST['profile_address_2_btn_active'])){
-	   $username = $_SESSION['LoginID'];
-	   $address_edit_2 = $_POST['address_2'];
-	   $city_edit_2 = $_POST['city_2'];
-	   $state_edit_2 = $_POST['state_2'];
-	   $postcode_edit_2 = $_POST['postcode_2'];
-	   
-	   $query_edit_2 = "UPDATE `user_address` SET `address`='$address_edit_2',`city`='$city_edit_2',`state`='$state_edit_2',`postcode`='$postcode_edit_2' WHERE username = '$username' AND addnum = '2'";
-	   
-	if (mysqli_query($conn, $query_edit_2)) {
-		header("Refresh:0");
-	} else {
-		phpAlert('Invalid Information');
-		header("Refresh:0");
-	}
-   
-   }
 
+		if(isset($_POST['fname_edit']) || isset($_POST['lname_edit']) || isset($_POST['email_edit']) || isset($_POST['phone_edit'])){
+			$fname_edit = $_POST['fname_edit'];
+			$lname_edit = $_POST['lname_edit'];
+			$email_edit = $_POST['email_edit'];
+			$phone_edit = $_POST['phone_edit'];
+			
+				//upload file 
+				$file = $_FILES['file'];
+				$fileName = $_FILES['file']['name'];
+			
+			if($_POST['fname_edit'] == NULL || $_POST['lname_edit'] == NULL || $_POST['email_edit'] == NULL || $_POST['phone_edit'] == NULL){
+				phpAlert('unable to set null');
+				header("Refresh:0");
+			}else{
+				if($_FILES['file']['name'] == NULL || $_FILES['file']['name'] == ''){
+					
+					$query_edit = "UPDATE `login` SET `fname`='$fname_edit',`lname`='$lname_edit',`email`='$email_edit',`phone`='$phone_edit' WHERE username = '$username'";				
+				
+				}else{
+					
+				$delete_query = "SELECT * FROM login WHERE username = '$username'";
+				if($select = mysqli_query($GLOBALS['conn'], $delete_query)){
+					while ($row = mysqli_fetch_row($select)) {
+							$file_name = $row[9];
+							$file_type = $row[10];
+					
+						if($file_name != "" || $file_name != null){
+							$dir = "img/profile-img/";
+							$file_delete = $dir . $file_name;
+							
+							unlink($file_delete);
+						}
+					}
+				}
+					
+				$fileTmpName = $_FILES['file']['tmp_name'];
+				$fileSize = $_FILES['file']['size'];
+				$fileError = $_FILES['file']['error'];
+				$fileType = $_FILES['file']['type'];
+
+				$fileExt = explode('.', $fileName);
+				$fileActualExt = strtolower(end($fileExt));
+
+					$allowed = array('jpg', 'jpeg', 'png', 'pdf', 'gif', 'JPG', 'JPEG', 'PNG', 'PDF', 'GIF');
+					if (in_array($fileActualExt, $allowed)) {
+						if ($fileError === 0) {
+							if ($fileSize < 10000000) {
+								$fileNameNew = uniqid('', true) . "." . $fileActualExt;
+								if (strcasecmp('image/jpg',$fileType) ==0||strcasecmp('image/jpeg', $fileType) ==0
+									||strcasecmp('image/png', $fileType)==0 ||strcasecmp('image/pdf' ,$fileType)==0 
+									||strcasecmp('image/gif',$fileType)==0) {
+									$fileDestination = 'img/profile-img/' . $fileNameNew;
+								}
+								move_uploaded_file($fileTmpName, $fileDestination);
+							} else {
+								echo "Your file is too big!";
+								return false;
+							}
+						} else {
+							echo "There was an error uploading your file!";
+							return false;
+						}
+					} else {
+						echo "You cannot upload files of this type!";
+						return false;
+					}
+					
+					$query_edit = "UPDATE `login` SET `fname`='$fname_edit',`lname`='$lname_edit',`email`='$email_edit',`phone`='$phone_edit' ,`name`='$fileNameNew',`type`='$fileType' WHERE username = '$username'";
+				
+				}
+				
+				if (mysqli_query($conn, $query_edit)) {
+					header("Refresh:0");
+				} else {
+					phpAlert('Invalid Information');
+					header("Refresh:0");
+				}
+			}
+		}
+		
+/*
+				$insert = "INSERT INTO replies(CategoryId, SubcategoryId, TopicId, Author, Reply, Date_Posted, name, type) 
+					VALUES ('$cid','$scid','$tid','$user','$comment','$date', '$fileNameNew', '$fileType')";
+				$query = mysqli_query($connect, $insert);
+				if ($query) {
+					addreply($cid, $scid, $tid);
+					header("Location: /readtopic.php?cid=$cid&scid=$scid&tid=$tid");
+				} else {
+					echo "<script>alert('something went wrong trying to reply please try again')</script>";
+				}
+	*/	
+	 
+		if(isset($_POST['address_1']) || isset($_POST['city_1']) || isset($_POST['state_1']) || isset($_POST['postcode_1'])){	
+			$address_edit_1 = $_POST['address_1'];
+			$city_edit_1 = $_POST['city_1'];
+			$state_edit_1 = $_POST['state_1'];
+			$postcode_edit_1 = $_POST['postcode_1'];
+			
+			if($_POST['postcode_1'] == NULL || $_POST['postcode_1'] == ''){
+				$query_edit_1 = "UPDATE `user_address` SET `address`='$address_edit_1',`city`='$city_edit_1',`state`='$state_edit_1',`postcode`=null WHERE username = '$username' AND addnum = '1'";
+			}else{
+				$query_edit_1 = "UPDATE `user_address` SET `address`='$address_edit_1',`city`='$city_edit_1',`state`='$state_edit_1',`postcode`='$postcode_edit_1' WHERE username = '$username' AND addnum = '1'";
+			}
+			
+			//$query_edit_1 = "UPDATE `user_address` SET `address`='$address_edit_1',`city`='$city_edit_1',`state`='$state_edit_1',`postcode`='$postcode_edit_1' WHERE username = '$username' AND addnum = '1'";
+			
+			if (mysqli_query($conn, $query_edit_1)) {
+				header("Refresh:0");
+			} else {
+				phpAlert('Invalid Information');
+				header("Refresh:0");
+			}
+		}
+		
+		if(isset($_POST['address_2']) || isset($_POST['city_2']) || isset($_POST['state_2']) || isset($_POST['postcode_2'])){
+			$address_edit_2 = $_POST['address_2'];
+			$city_edit_2 = $_POST['city_2'];
+			$state_edit_2 = $_POST['state_2'];
+			$postcode_edit_2 = $_POST['postcode_2'];
+			
+			if($_POST['postcode_2'] == NULL || $_POST['postcode_2'] == ''){
+				$query_edit_2 = "UPDATE `user_address` SET `address`='$address_edit_2',`city`='$city_edit_2',`state`='$state_edit_2',`postcode`=null WHERE username = '$username' AND addnum = '2'";
+			}else{
+				$query_edit_2 = "UPDATE `user_address` SET `address`='$address_edit_2',`city`='$city_edit_2',`state`='$state_edit_2',`postcode`='$postcode_edit_2' WHERE username = '$username' AND addnum = '2'";
+			}
+			
+			//$query_edit_1 = "UPDATE `user_address` SET `address`='$address_edit_1',`city`='$city_edit_1',`state`='$state_edit_1',`postcode`='$postcode_edit_1' WHERE username = '$username' AND addnum = '1'";
+			
+			if (mysqli_query($conn, $query_edit_2)) {
+				header("Refresh:0");
+			} else {
+				phpAlert('Invalid Information');
+				header("Refresh:0");
+			}
+		}
+   }
+   
 ?>
 
 <!DOCTYPE html>
@@ -101,6 +188,11 @@
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<!--===============================================================================================-->
+
+	<link href="css/cart.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
+	<script type="text/javascript" src="data.json"></script>
+
   </head>
 
   <body id="page-top">
@@ -135,27 +227,68 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
 
+      <div class="container">	
+        <a class="navbar-brand js-scroll-trigger" href="index.php">ROYARY Resources</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           Menu
           <i class="fa fa-bars"></i>
-        </button>     
-
-	 <div class="container">	
-		<a class="navbar-brand js-scroll-trigger" href="index.php">ROYARY Resources</a>
+        </button>
 		
+        <div class="collapse navbar-collapse" id="navbarResponsive">
 		<div id="guest">
 	    <?php 
 			navbar();
-		?>
+		?>	
+		</div>
 		
-	  </div>
-		
-        <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav text-uppercase ml-auto">
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="index.php">Home</a>
+              <a class="nav-link" href="index.php">Home</a>
+            </li>
+            <li class="nav-item product-dropdown">
+              <a class="nav-link ">Products</a>
+			  	<div class="product-dropdown-content">
+					<a href="cart.php">Mask</a>
+					<a href="#">coming soon</a>
+				</div>
+            </li>
+            <li class="nav-item about-dropdown">
+              <a class="nav-link js-scroll-trigger" href="#">About</a>
+				<div class="about-dropdown-content">
+					<a href="about.php">About us</a>
+					<a href="about_product.php">About product</a>
+				</div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="index.php">Contact</a>
             </li>
           </ul>
+		  
+			<!-- cart -->
+			<ul class="navbar-nav text-uppercase">
+			<li class="nav-item open-cart-button cart-dropdown"><a href="order.php"><i class="fa fa-shopping-cart" style="font-size:24px"></i>
+				<i id="cart-count"><?php 
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo 0; 
+				}
+				?></i>
+			</a></li>
+			<li class="nav-item open-cart-button news-dropdown"><a href="news.php"><i class="fa fa-columns" style="font-size:24px"></i></a></li>
+			</ul>
+			<!--
+			<div class="count_items" id="cart-info">
+				<?php 
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo 0; 
+				}
+				?>
+			</div>
+			-->
+			<!-- cart -->
         </div>
       </div>
     </nav>
@@ -163,6 +296,110 @@
     <!-- Header -->
     <header class="masthead">
     </header>
+
+	<?php
+
+	$admin = $_SESSION['admin'];
+
+	if ($admin == 'admin'){
+	?>
+	<!-- Under Agent Chart-->
+	<section class="py-0">
+		<div class="container emp-profile m-t-150">
+		
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header" style="width: 20%; margin-left: auto; margin-right: auto;">Dashboard</h1>
+			</div>
+		</div><!--/.row-->
+		<div class="panel panel-container" style="width: 80%; margin-left: auto;">
+			<div class="row">
+				<div class="col-xs-6 col-md-3 col-lg-3 no-padding">
+					<div class="panel panel-teal panel-widget border-right">
+						<div><em class="fa fa-xl fa-shopping-cart color-blue" style="font-size: 2em;"></em></div>
+				<?php
+				$totalsalesquery = "SELECT sum(quantity) FROM `productorder`";
+				
+				if ($result = mysqli_query($conn,$totalsalesquery)){
+					
+				// Fetch one and one row
+					while ($row = mysqli_fetch_row($result)){
+						$totalsale = $row[0]
+				?>
+						<div class="large"><?php echo $totalsale; ?></div>
+				<?php
+					}
+				}
+				?>
+						<div class="text-muted">Total Sales</div>
+					</div>
+				</div>
+				<div class="col-xs-6 col-md-3 col-lg-3 no-padding">
+					<div class="panel panel-blue panel-widget border-right">
+						<div><em class="fa fa-xl fa fa-credit-card color-orange" style="font-size: 2em;"></em></div>
+				<?php
+				$totalpaymentquery = "SELECT count(id) FROM `payment`";
+				
+				if ($result = mysqli_query($conn,$totalpaymentquery)){
+					
+				// Fetch one and one row
+					while ($row = mysqli_fetch_row($result)){
+						$totalpayment = $row[0]
+				?>
+						<div class="large"><?php echo $totalpayment; ?></div>
+				<?php
+					}
+				}
+				?>
+						<div class="text-muted">Total Payment Made</div>
+					</div>
+				</div>
+				<div class="col-xs-6 col-md-3 col-lg-3 no-padding">
+					<div class="panel panel-orange panel-widget border-right">
+						<div><em class="fa fa-xl fa-users color-teal" style="font-size: 2em;"></em></div>
+				<?php
+				$countuserquery = "SELECT count(userid) FROM `login`";
+				
+				if ($result = mysqli_query($conn,$countuserquery)){
+					
+				// Fetch one and one row
+					while ($row = mysqli_fetch_row($result)){
+						$countuser = $row[0]
+				?>
+						<div class="large"><?php echo $countuser; ?></div>
+				<?php
+					}
+				}
+				?>
+						<div class="text-muted">Total Users</div>
+					</div>
+				</div>
+			</div><!--/.row-->
+		</div>
+		
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Line Chart
+						<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
+					<div class="panel-body">
+						<div class="canvas-wrapper">
+							<canvas class="main-chart" id="line-chart" height="200" width="600"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--/.row--> 
+        </div>
+	</section>
+<?php
+	}else{
+?>
+	<div class="m-t-150"></div>
+<?php
+	}
+?>
 
 	<!-- profile -->
 	<section class="py-0">
@@ -183,20 +420,29 @@
 				$fname = $row[3];
 				$lname = $row[4];
 				$email = $row[5];
-				$profile_img = $row[6];
-				$datejoin = $row[7];
-				$phone = $row[8];
+				$datejoin = $row[6];
+				$phone = $row[7];
+				$name = $row[9];
+				$type = $row[10];
 		
 		?>
 	
-	<div class="container emp-profile" style="margin-top: 10%;">
+	<div class="container emp-profile">
+			<form method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="profile-img">
-                            <?php echo "<img src='img/icons/".$profile_img."'></img>"; ?>
-                            <div class="file btn btn-lg btn-primary" style="display:none;">
+                            <?php 
+							if (strcasecmp('image/jpg', $type) == 0 || strcasecmp('image/jpeg', $type) == 0
+							|| strcasecmp('image/png', $type) == 0 || strcasecmp('image/pdf', $type) == 0 || strcasecmp('image/gif', $type) == 0) {
+								echo "<div id='preview'><img src='img/profile-img/".$name."'></img></div>"; 
+							}else{
+								echo "<div id='preview'><img src='img/profile-img/default.png'></img></div>"; 
+							}
+							?>
+                            <div class="file btn btn-lg btn-primary" id="file_edit" style="display:none;">
                                 Change Photo
-                                <input type="file" id="file_edit" name="file"/>
+                                <input type="file" name="file" onchange="readURL(this)"/>
                             </div>
                         </div>
                     </div>
@@ -390,7 +636,7 @@
                                                 <p id="postcode_2"><?php echo $postcode_1; ?></p>
                                             </div>
                                         </div>
-										<div class="row">
+										<div class="row p-b-100">
 										    <div class="col-md-3" style="margin-left:auto;">
 												<button class='profile-edit-btn' id="profile_address_2_btn">Edit Address</button>
 											</div>
@@ -452,24 +698,18 @@
                         </div>
                     </div>
                 </div> 
-			<div class="row">
-			    <div class="col-md-3" style="margin-left:auto;">
-					<button class='profile-submit-btn' id="profile_profile_btn" style="display:none;">Save Change</button>
-				</div>
-			</div>				
+				<div class="row">
+					<div class="col-md-3" style="margin-left:auto;">
+						<button class='login100-form-btn' id="profile_profile_btn" name="profile_profile_btn" style="display:none;">Save Change</button>
+					</div>
+				</div>		
+			</form>
         </div>
 <?php
 			}
 		}
 	}
 ?>
-	</section>
-	
-	<!-- Under Agent Chart-->
-	<section class="py-0">
-		<div class="container emp-profile">
-            
-        </div>
 	</section>
 	
     <!-- Footer -->
@@ -512,7 +752,21 @@
       </div>
     </footer>
 	
-
+	<script src="jschart/chart.min.js"></script>
+	<script src="jschart/chart-data.php"></script>
+	<script src="jschart/bootstrap-datepicker.js"></script>
+	<script src="jschart/custom.js"></script>
+	<script>
+	window.onload = function () {
+	var chart1 = document.getElementById("line-chart").getContext("2d");
+	window.myLine = new Chart(chart1).Line(lineChartData, {
+	responsive: true,
+	scaleLineColor: "rgba(0,0,0,.2)",
+	scaleGridLineColor: "rgba(0,0,0,.05)",
+	scaleFontColor: "#c5c7cc"
+	});
+};
+	</script>	
   </body>
 
 </html>
@@ -554,10 +808,10 @@
 	//edit profile
 	$( "#profile_edit_btn").click(function(e) {
 		e.preventDefault(); 
-		$('#fname').html('<div class="wrap-input100 validate-input"><input placeholder="<?php echo $fname; ?>" value="<?php echo $fname; ?>" name="fname_edit" class="input100 container-margin" maxlength="50"><span class="focus-input100"></span></div>');
-		$('#lname').html('<div class="wrap-input100 validate-input"><input placeholder="<?php echo $lname; ?>" value="<?php echo $lname; ?>" name="lname_edit" class="input100 container-margin" maxlength="50"><span class="focus-input100"></span></div>');
-		$('#email').html('<div class="wrap-input100 validate-input"><input placeholder="<?php echo $email; ?>" value="<?php echo $email; ?>" name="email_edit" class="input100 container-margin" maxlength="50"><span class="focus-input100"></span></div>');
-		$('#phone').html('<div class="wrap-input100 validate-input"><input placeholder="<?php echo $phone; ?>" value="<?php echo $phone; ?>" name="phone_edit" class="input100 container-margin" maxlength="50"><span class="focus-input100"></span></div>');
+		$('#fname').html('<div class="wrap-input100 validate-input"><input placeholder="<?php echo $fname; ?>" value="<?php echo $fname; ?>" name="fname_edit" class="input100 container-margin" maxlength="50" required/><span class="focus-input100"></span></div>');
+		$('#lname').html('<div class="wrap-input100 validate-input"><input placeholder="<?php echo $lname; ?>" value="<?php echo $lname; ?>" name="lname_edit" class="input100 container-margin" maxlength="50" required/><span class="focus-input100"></span></div>');
+		$('#email').html('<div class="wrap-input100 validate-input"><input placeholder="<?php echo $email; ?>" value="<?php echo $email; ?>" name="email_edit" class="input100 container-margin" maxlength="50" required/><span class="focus-input100"></span></div>');
+		$('#phone').html('<div class="wrap-input100 validate-input"><input placeholder="<?php echo $phone; ?>" value="<?php echo $phone; ?>" name="phone_edit" class="input100 container-margin" maxlength="50" required/><span class="focus-input100"></span></div>');
 		$('#profile_edit_btn').css("display","none");
 		$('#profile_profile_btn').css("display", "block");
 		$('#file_edit').css("display","block");
@@ -584,4 +838,21 @@
 		$('#profile_address_2_btn').css("display","none");
 		$('#profile_profile_btn').css("display", "block");
 	});
+</script>
+<script>
+function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+				$('#preview').empty();
+                reader.onload = function (e) {
+					if(input.files[0].type.includes('image')){
+						//$('#preview').attr('src', e.target.result);
+						$('#preview').append("<img id='image' src="+  e.target.result +">")
+                    }
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
 </script>

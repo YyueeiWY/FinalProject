@@ -6,8 +6,19 @@ if(!empty($_POST["action"])) {
 switch($_POST["action"]) {
 	case "add":
 		if(!empty($_POST["quantity"])) {
-			$productByCode = runQuery("SELECT * FROM product WHERE code='" . $_POST["code"] . "'");
-			$itemArray = array($productByCode[0]["code"]=>array('name'=>$productByCode[0]["name"], 'code'=>$productByCode[0]["code"], 'quantity'=>$_POST["quantity"], 'price'=>$productByCode[0]["price"]));
+			$productByCode = runQuery("SELECT product.id, product.name, product.code, product.categories, product.image, product.price, stock.stock 
+								FROM product INNER JOIN stock ON product.code = stock.code 
+								WHERE product.code='" . $_POST["code"] . "'");
+			/*
+			$userid = $_SESSION['LoginID'];
+			$product_id = $_POST['id'];
+			$quantity = $_POST["quantity"];
+			$addquery = "INSERT INTO `productorder`(`id`, `orderid`, `productid`, `quantity`) VALUES (NULL, '$userid', '$product_id', '$quantity')";
+			if (mysqli_query($conn, $addquery)) {} else {}
+			*/
+			
+			//array from table product
+			$itemArray = array($productByCode[0]["code"]=>array('id'=>$productByCode[0]["id"], 'name'=>$productByCode[0]["name"], 'code'=>$productByCode[0]["code"], 'image'=>$productByCode[0]["image"], 'quantity'=>$_POST["quantity"], 'price'=>$productByCode[0]["price"], 'stock'=>$productByCode[0]["stock"]));
 			
 			if(!empty($_SESSION["cart_item"])) {
 				if(in_array($productByCode[0]["code"],$_SESSION["cart_item"])) {
@@ -24,6 +35,12 @@ switch($_POST["action"]) {
 	break;
 	case "remove":
 		if(!empty($_SESSION["cart_item"])) {
+			/*
+			$userid = $_SESSION['LoginID'];
+			$product_id = $_POST['id'];
+			$delquery = "DELETE FROM `productorder` WHERE orderid = '$userid' AND productid = '$product_id'";
+			if (mysqli_query($conn, $delquery)) {} else {}
+			*/
 			foreach($_SESSION["cart_item"] as $k => $v) {
 					if($_POST["code"] == $k)
 						unset($_SESSION["cart_item"][$k]);
@@ -33,6 +50,12 @@ switch($_POST["action"]) {
 		}
 	break;
 	case "empty":
+		/*
+		$userid = $_SESSION['LoginID'];
+		$empquery = "DELETE FROM `productorder` WHERE orderid = '$userid'";
+		if (mysqli_query($conn, $empquery)) {} else {}
+		*/
+			
 		unset($_SESSION["cart_item"]);
 	break;		
 }
@@ -41,38 +64,22 @@ switch($_POST["action"]) {
 <?php
 if(isset($_SESSION["cart_item"])){
     $item_total = 0;
-?>	
-<table cellpadding="10" cellspacing="1" style="width:100%;">
-<tbody>
-<tr class="cart-head-tr">
-<th><strong></strong></th>
-<th><strong>Name</strong></th>
-<th><strong>Code</strong></th>
-<th><strong>Quantity</strong></th>
-<th><strong>Price</strong></th>
-</tr>	
-<?php		
+		
     foreach ($_SESSION["cart_item"] as $item){
 		?>
-				<tr class="cart-tr">
-				<td><a onClick="cartAction('remove','<?php echo $item["code"]; ?>')" class="btnRemoveAction cart-action"><i class="fa fa-close" style="font-size:24px"></i></a></td>
-				<td><strong><?php echo $item["name"]; ?></strong></td>
-				<td><?php echo $item["code"]; ?></td>
-				<td><?php echo $item["quantity"]; ?></td>
-				<td align=right><?php echo "$".$item["price"]; ?></td>
-				</tr>
-				<?php
+			<div class="row cart-tr">
+				<div class="cart-img col-md-3"><img src='<?php echo $item["image"]; ?>' width="150px" height="150px"></div>
+			<div class="col-md-2"><strong><?php echo $item["name"]; ?></strong></div>
+			<div class="col-md-2"><?php echo $item["code"]; ?></div>
+			<div class="col-md-2" style="text-align: center;"><?php echo $item["quantity"]; ?></div>
+			<div class="col-md-2"><?php echo "RM".$item["price"]*$item["quantity"]; ?></div>
+			<div class="cancel"><a onClick="cartAction('remove', '<?php echo $item["id"]; ?>', '<?php echo $item["code"]; ?>', '<?php $item["stock"]; ?>')" class="btnRemoveAction cart-action"><i class="fa fa-close" style="font-size:24px"></i></a></div>
+			</div><hr>
+			<?php
         $item_total += ($item["price"]*$item["quantity"]);
 		}
-		?>
 
-<tr>
-<td colspan="5" align=right><strong>Total:</strong> <?php echo "$".$item_total; ?></td>
-</tr>
-</tbody>
-</table>		
-  <?php
 }else{
-	die("Your Cart is empty"); //we have empty cart
+	echo '<div class="empty_cart">Your Cart is empty</div>'; //we have empty cart
 }
 ?>

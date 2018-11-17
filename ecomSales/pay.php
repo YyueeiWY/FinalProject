@@ -7,8 +7,8 @@
 			phpAlert('Cart Empty');
 			header('Location: order.php');
 		}
-		
-  if(isset($_GET['submit'])){
+   
+  if(isset($_GET['fname'])){
 	  $fname = $_GET['fname'];
 	  $lname = $_GET['lname'];
 	  $address = $_GET['address'];
@@ -17,13 +17,20 @@
 	  $postcode = $_GET['postcode'];
 	  $contact = $_GET['contact'];
 	  $email = $_GET['email'];
-	  if(isset($_GET['promocode'])){
-		  $promocode = $_GET['promocode'];
-	  }else{
-		  $promocode = '';
-	  }
-	  header("Location: pay.php?fname=$fname&lname=$lname&address=$address&state=$state&city=$city&postcode=$postcode&contact=$contact&email=$email&promocode=$promocode");
-  }	
+	  $promocode = $_GET['promocode'];
+	  
+  }else{
+	  phpAlert('empty name');
+	  header('Location: index.php');
+	  $fname = '';
+	  $lname = '';
+	  $address = '';
+	  $state = '';
+	  $city = '';
+	  $postcode = '';
+	  $contact = '';
+	  $email = '';
+  }
 
 ?>
 
@@ -122,7 +129,7 @@ function cartAction(action,product_id, product_code, current_quantity) {
 				case "add":
 					$("#add_"+product_code).hide();
 					$("#added_"+product_code).show();
-						
+						/*
 						jQuery.ajax({
 						url: "ajax_count.php",
 						data:{
@@ -137,7 +144,7 @@ function cartAction(action,product_id, product_code, current_quantity) {
 							console.log('fail to add');
 						}
 						});
-						
+						*/
 				break;
 				case "remove":
 					$("#add_"+product_code).show();
@@ -204,24 +211,6 @@ function cartAction(action,product_id, product_code, current_quantity) {
 	});
 }
 }
-
-function promobtn(){
-	var promocode = $('#promocode').val();
-	
-	jQuery.ajax({
-	url: "ajax_promo.php",
-	dataType:"json",
-	data:{
-		promocode:promocode
-	},
-	type: "POST",
-	success:function(data){
-		$("#promocode").val(data.promo);
-		$("#validcode").html(data.validcode);
-	}
-	});
-}
-
 </script>
   </head>
 
@@ -346,7 +335,6 @@ input.invalid {
 	<div class="cart-box"></div>
 	
     <section id="portfolio1" class="m-t-50">
-	<form method="get" action="#">
       <div class="container wow fadeInUp">
         <div class="section-header">
 		<div class="aboout_logo">
@@ -359,175 +347,93 @@ input.invalid {
 <div class="row">				
 	<div class="cart-popup" id="myCart">
 		<div class="row">
-			<div style="width: auto;">
-				<h2>DELIVERY ADDRESS</h2>
-			</div>
+			<div style="width: auto;"><h2>DELIVERY ADDRESS</h2></div>
 		</div>
-		<div class="wrap-address m-t-50">
-			<?php 
-	if(isset($_SESSION['LoginID'])){
-		
-		$username = $_SESSION['LoginID'];
-			
-		$query = "SELECT * FROM `login` WHERE username='$username'";
-		
-		if ($result = mysqli_query($GLOBALS['conn'],$query)){
-			
-		// Fetch one and one row
-			while ($row = mysqli_fetch_row($result)){
-				$fname = $row[3];
-				$lname = $row[4];
-				$email = $row[5];
-				$phone = $row[7];
-		
-				
-				$address_query = "SELECT * FROM `user_address` WHERE username='$username' AND addnum = '1'";
-				
-				if ($result = mysqli_query($GLOBALS['conn'],$address_query)){
-					
-				// Fetch one and one row
-					while ($row = mysqli_fetch_row($result)){
-						$address = $row[3];
-						$city = $row[4];
-						$state = $row[5];
-						$postcode = $row[6];
-			?>		
-					<div>Your name :</div>
-						<div class="inline">
-						<div class="wrap-input100 validate-input">
-							<input placeholder="first name..." name="fname" value="<?php echo $fname; ?>" class="input100 container-margin" required>
-							<span class="focus-input100"></span>
-						</div>
-					</div>
-					<div class="inline">
-						<div class="wrap-input100 validate-input">
-							<input placeholder="last name..." id="lname" name="lname" value="<?php echo $lname; ?>" class="input100 container-margin" required>
-							<span class="focus-input100"></span>
-						</div>
-					</div>
-					
-					<div>Address :</div>
-					<div class="wrap-input100 validate-input">
-						<input placeholder="address*..." name="address" value="<?php echo $address; ?>" class="input100 container-margin"required>
-						<span class="focus-input100"></span>
-					</div>
-					
-					<div>State :</div>
-					<div class="wrap-input100 validate-input">
-						<input placeholder="state..." id="state" value="<?php echo $state; ?>" name="state" class="input100 container-margin" required>
-						<span class="focus-input100"></span>
-					</div>
-					
-					<div>City :</div>
-					<div class="inline">
-					<div class="wrap-input100 validate-input">
-						<input placeholder="city..." name="city" value="<?php echo $city; ?>" class="input100 container-margin" required>
-						<span class="focus-input100"></span>
-					</div>
-					</div>
-					
-					<div>Post Code :</div>
-					<div class="inline">
-					<div class="wrap-input100 validate-input">
-						<input placeholder="postcode..." id="postcode" value="<?php echo $postcode; ?>" name="postcode" class="input100 container-margin" required>
-						<span class="focus-input100"></span>
-					</div>
-					</div>
-					
-					<div>Contact :</div>
-					<div class="wrap-input100 validate-input">
-						<input placeholder="contact..." id="contact" name="contact" value="<?php echo $phone; ?>" class="input100 container-margin" required>
-						<span class="focus-input100"></span>
-					</div>
-					
-					<div>Email :</div>
-					<div class="wrap-input100 validate-input">
-						<input placeholder="email..." id="email" name="email" value="<?php echo $email; ?>" class="input100 container-margin" required>
-						<span class="focus-input100"></span>
-					</div>
-			<?php
-					}
-				}
-			}
-		}
-	}else{
-		?>
-					<div>Your name :</div>
-						<div class="inline">
-						<div class="wrap-input100 validate-input">
-							<input placeholder="first name..." name="fname" class="input100 container-margin" required>
-							<span class="focus-input100"></span>
-						</div>
-					</div>
-					<div class="inline">
-						<div class="wrap-input100 validate-input">
-							<input placeholder="last name..." id="lname" name="lname" class="input100 container-margin" required>
-							<span class="focus-input100"></span>
-						</div>
-					</div>
-					
-					<div>Address :</div>
-					<div class="wrap-input100 validate-input">
-						<input placeholder="address*..." name="address" class="input100 container-margin"required>
-						<span class="focus-input100"></span>
-					</div>
-					
-					<div>State :</div>
-					<div class="wrap-input100 validate-input">
-						<input placeholder="state..." id="state" name="state" class="input100 container-margin" required>
-						<span class="focus-input100"></span>
-					</div>
-					
-					<div>City :</div>
-					<div class="inline">
-					<div class="wrap-input100 validate-input">
-						<input placeholder="city..." name="city" class="input100 container-margin" required>
-						<span class="focus-input100"></span>
-					</div>
-					</div>
-					
-					<div>Post Code :</div>
-					<div class="inline">
-					<div class="wrap-input100 validate-input">
-						<input placeholder="postcode..." id="postcode" name="postcode" class="input100 container-margin" required>
-						<span class="focus-input100"></span>
-					</div>
-					</div>
-					
-					<div>Contact :</div>
-					<div class="wrap-input100 validate-input">
-						<input placeholder="contact..." id="contact" name="contact" class="input100 container-margin" required>
-						<span class="focus-input100"></span>
-					</div>
-					
-					<div>Email :</div>
-					<div class="wrap-input100 validate-input">
-						<input placeholder="email..." id="email" name="email" class="input100 container-margin" required>
-						<span class="focus-input100"></span>
-					</div>
-		<?php
-	}
-			?>
-			</div>
-		<!-- <div class="cart-item" id="cart-item"></div> -->
-		
-	</div>
-
-<div>
-	<div class="checkoutbox">
-		<div class="checkout-wrap">
-			<div class="m-b-10"><input type="submit" name="submit" class="login100-form-btn" value="Preview & Pay"/></div>
-			<div class="text-uppercase p-b-20"><strong>ORDER SUMMARY:</strong></div>
-			<div class="checkout-summary">
-			<div class="text-muted text-uppercase count_items" id="cart-info1">
-				<?php
-				if(isset($_SESSION["cart_item"])){
-					echo count($_SESSION["cart_item"]); 
-				}else{
-					echo "0"; 
-				}
-				?> Products
+		<div class="m-t-20 m-b-20"><h2>Address Detail :</h2></div>
+		<div class="wrap-address">
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>First Name:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="delivery"><?php echo $fname; ?></p>
+                    </div>
 				</div>
+				
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>Last Name:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="delivery"><?php echo $lname; ?></p>
+                    </div>
+				</div>
+					
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>Address:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="delivery"><?php echo $address; ?></p>
+                    </div>
+				</div>
+					
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>State:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="delivery"><?php echo $state; ?></p>
+                    </div>
+				</div>
+					
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>City:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="delivery"><?php echo $city; ?></p>
+                    </div>
+				</div>
+					
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>Post Code:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="delivery"><?php echo $postcode; ?></p>
+                    </div>
+				</div>
+					
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>Contact:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="delivery"><?php echo $contact; ?></p>
+                    </div>
+				</div>
+					
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>Email:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="delivery"><?php echo $email; ?></p>
+                    </div>
+				</div>
+				
+				<div class="row">
+                    <div class="col-md-6">
+                        <label>Promo Code:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="delivery"><?php echo $promocode; ?></p>
+                    </div>
+				</div>
+			</div>
+
+		<div class="m-t-20 m-b-20"><h2>Order Summary :</h2></div>
 			<div id="producttotal">
 				<div class="row">
                     <div class="col-md-6">
@@ -581,46 +487,98 @@ input.invalid {
 									$item_total += ($item["price"]*$item["quantity"]);
 								}
 								$tax = ($item_total/100)*6;
-								echo $gst = ($item_total+$tax);
+								echo ($item_total+$tax);
 							}
 							?> 
 						</p>
                     </div>
 				</div>
+	<?php
+	if(isset($_GET['promocode'])){
+		$promocode = $_GET['promocode'];
+	}else{
+		$promocode = '';
+	}
+	$sql = "SELECT * FROM `promocode` WHERE code = '$promocode' AND used = 'valid'";
+	$result = mysqli_query($conn, $sql);
+	
+	if(!empty($_GET['promocode'])){
+		if (mysqli_num_rows($result) > 0){
+		
+			while ($row = mysqli_fetch_row($result)){
+				$discount = $row[2];
+					
+			echo	'<div class="row">
+							<div class="col-md-6">
+								<label>After PromoCode :</label>
+							</div>
+							<div class="col-md-6">
+								<p id="promo">';
+							
+							if(isset($_SESSION["cart_item"])){
+								$item_total = 0;
+									
+								foreach ($_SESSION["cart_item"] as $item){
+									$item_total += ($item["price"]*$item["quantity"]);
+								}
+								$tax = ($item_total/100)*6;
+								$promo = ($item_total/100)*$discount;
+								echo $afterless = ($item_total+$tax)-$promo;
+							}
+							 
+				echo '			</p>
+							</div>
+						</div>
+						';
+			}
+		}
+	}
+					?>
 			</div>
+	</div>
+
+<div>
+	<div class="checkoutbox">
+		<div class="checkout-wrap">
+			<div class="m-b-10">
+			<?php echo '<a class="login100-form-btn" href="paySubmit.php?fname=' . $_GET["fname"] . '&lname=' . $_GET["lname"] . '&address=' . $_GET["address"] . '&state=' . $_GET["state"] . '&city=' . $_GET["city"] . '&postcode=' . $_GET["postcode"] . '&contact=' . $_GET["contact"] . '&email=' . $_GET["email"] . '&promocode=' . $_GET["promocode"] . '">Pay</a>'; ?>
+			</div>
+			<div class="text-uppercase p-b-20"><strong>ORDER SUMMARY:</strong></div>
+			<div class="checkout-summary">
+			<div class="text-muted text-uppercase count_items" id="cart-info1">
+				<?php
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo "0"; 
+				}
+				?> Products
+				</div>
+							<?php
+    $item_total = 0;
+		
+    foreach ($_SESSION["cart_item"] as $item){
+		?>
+			<div class="row">
+				<div class="cart-img col-md-3"><img src='<?php echo $item["image"]; ?>' width="60px" height="60px"></div>
+			<div class="col-md-6"><strong><?php echo $item["name"]; ?></strong></div>
+			<div class="col-md-2" style="text-align: center;"><?php echo $item["quantity"]; ?></div>
+			</div>
+			<?php
+        $item_total += ($item["price"]*$item["quantity"]);
+		}?>
 			</div>
 		</div>
 	</div>
 	
-	<div class="promotbox">
-		<div class="p-t-10">
-			<div class="promobox-summary" id="openPromo">
-				<strong>Promo Code</strong><i class="fa fa-tags" style="font-size: 20px; padding: 3px;"></i>
-			</div>
-		</div>
-	</div>
-
-	<div class="promotbox-content" id="myPromo">
-		<div>
-			<div class="m-b-10 promobox-content-summary">
-				<div id="promopage">
-					<div class="m-b-10"><button type="button" onclick="promobtn()" class="login100-form-btn">Apply</button></div>
-						<div class="wrap-input100 validate-input">
-							<input placeholder="promo code..." id="promocode" name="promocode" type="text" class="input100 container-margin">
-							<span class="focus-input100"></span>
-						</div>
-					<div><h6 id="validcode"></h6></div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div>
 </div>
 		<div style="width: 300px; margin-left: auto; margin-right: auto;">
-			<div><input type="submit" name="submit" class="login100-form-btn" value="Preview & Pay"/></div>
+			<div class="m-b-10">
+			<?php echo '<a class="login100-form-btn" href="paySubmit.php?fname=' . $_GET["fname"] . '&lname=' . $_GET["lname"] . '&address=' . $_GET["address"] . '&state=' . $_GET["state"] . '&city=' . $_GET["city"] . '&postcode=' . $_GET["postcode"] . '&contact=' . $_GET["contact"] . '&email=' . $_GET["email"] . '&promocode=' . $_GET["promocode"] . '">Pay</a>'; ?>
+			</div>
 		</div>
       </div>
-		</form>
     </section><!-- #portfolio -->
 
     <!-- Footer -->

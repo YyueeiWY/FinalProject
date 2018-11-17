@@ -47,48 +47,80 @@
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<!--===============================================================================================-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
 
   </head>
 
   <body id="page-top">
-
+  
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
 
+      <div class="container">	
+        <a class="navbar-brand js-scroll-trigger" href="index.php">ROYARY Resources</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           Menu
           <i class="fa fa-bars"></i>
-        </button>     
-	  
-	 <div class="container">	
-
-		<a class="navbar-brand js-scroll-trigger" href="index.php">ROYARY Resources</a>
-	 
+        </button>
+		
+        <div class="collapse navbar-collapse" id="navbarResponsive">
 		<div id="guest">
 	    <?php 
 			navbar();
 		?>	
 		</div>
-	  
-        <div class="collapse navbar-collapse" id="navbarResponsive">
+		
           <ul class="navbar-nav text-uppercase ml-auto">
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#home">Home</a>
+              <a class="nav-link" href="#home">Home</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#portfolio">Products</a>
+            <li class="nav-item product-dropdown">
+              <a class="nav-link ">Products</a>
+			  	<div class="product-dropdown-content">
+					<a href="cart.php">Mask</a>
+					<a href="#">coming soon</a>
+				</div>
             </li>
-            <li class="nav-item">
-              <a class="nav-link js-scroll-trigger about_dropdown" href="about.php">About</a>
+            <li class="nav-item about-dropdown">
+              <a class="nav-link js-scroll-trigger" href="#">About</a>
+				<div class="about-dropdown-content">
+					<a href="about.php">About us</a>
+					<a href="about_product.php">About product</a>
+				</div>
             </li>
             <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
             </li>
           </ul>
+		  
+			<!-- cart -->
+			<ul class="navbar-nav text-uppercase">
+			<li class="nav-item open-cart-button cart-dropdown"><a href="order.php"><i class="fa fa-shopping-cart" style="font-size:24px"></i>
+				<i id="cart-count"><?php 
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo 0; 
+				}
+				?></i>
+			</a></li>
+			<li class="nav-item open-cart-button news-dropdown"><a href="news.php"><i class="fa fa-columns" style="font-size:24px"></i></a></li>
+			</ul>
+			<!--
+			<div class="count_items" id="cart-info">
+				<?php 
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo 0; 
+				}
+				?>
+			</div>
+			-->
+			<!-- cart -->
         </div>
       </div>
     </nav>
-	
 	
     <!-- Header -->
 	<!--
@@ -121,15 +153,15 @@
 		<?php
 
 		  if (!isset($_SESSION["LoginID"])){
-          echo "<div class='wrap-sign-all'><div class='sign-text'>Sign In Here</div><div class='wrap-sign-in-block'><div><a class='login100-form-btn sign-in-block' href='login.php'>Sign In</a></div>";
+          echo "<div class='wrap-sign-all'><div class='wrap-sign-in-block'><div><a class='login100-form-btn sign-in-block' href='login.php'>Sign In</a></div>";
 		  
 		  echo "<div><a class='login100-form-btn sign-in-block' href='register.php'>Sign Up</a></div></div></div>";
 		  
 		  }else{
 			  
-			echo "<div class='wrap-sign-all'><div class='sign-text1'>Shop Now</div><div class='wrap-sign-in-block'><div><a class='login100-form-btn sign-in-block' href='cart.php'>Shop Now</a></div>";
+			echo "<div class='wrap-sign-all'><div class='wrap-sign-in-block'><div><a class='login100-form-btn sign-in-block' href='cart.php'>Shop Now</a></div>";
 			
-			echo "<div><a class='login100-form-btn sign-in-block' href='#'>My Order</a></div></div></div>";
+			echo "<div><a class='login100-form-btn sign-in-block' href='order.php'>My Order</a></div></div></div>";
 		  }
 	  ?>
 	  
@@ -224,7 +256,7 @@
 			<img src="img/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
             <h2 class="section-heading text-uppercase">New Products</h2>
             <h3 class="section-subheading-1 text-muted">2 STEP SYNERGY EFFECT MASK.</h3>
-			<a class='btn btn-primary text-uppercase js-scroll-trigger bttm' href='cart.php'>Shop now</a>
+			<div class="wrap-shop-block p-t-50"><a class='login100-form-btn bttm' href='cart.php'>Shop now</a></div>
           </div>
         </div>
         <div class="row">
@@ -349,11 +381,11 @@
 				<img src="img/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
 				<h2 class="section-heading text-uppercase">Guide </h2>
 				<h3 class="section-subheading-1 text-muted">Steps following below:</h3>
-				<a class='btn btn-primary text-uppercase js-scroll-trigger bttm' href='cart.php'>Shop now</a>
+				<div class="wrap-shop-block p-t-50"><a class='login100-form-btn bttm' href='cart.php'>Shop now</a></div>
 				</div></br>
 				<div><img style="" src="img/portfolio/f1e2863d-f9e0-44a8-b33a-eff61313c234.jpg" class="col-lg-10"></img></div>
 				</br></br>
-				<a class='btn btn-primary text-uppercase js-scroll-trigger bttm' href='cart.php'>Shop now</a>
+				<div class="wrap-shop-block p-t-50"><a class='login100-form-btn bttm' href='cart.php'>Shop now</a></div>
 				<h3 class="section-subheading text-muted">Video show below:</h3>
 				<iframe class="col-lg-10 qoo10-src="https://www.youtube.com/embed/CsL9t2n3uNo" width="640" height="480" frameborder="0" src="https://www.youtube.com/embed/CsL9t2n3uNo"></iframe>
 			</div>
@@ -427,7 +459,7 @@
                 <div class="clearfix"></div>
                 <div class="col-lg-12 text-center">
                   <div id="success"></div>
-                  <button id="sendMessageButton" class="btn btn-primary btn-xl text-uppercase" type="submit" style="border:none; border-radius:40px;"">Send Message</button>
+                  <div class="wrap-shop-block"><button id="sendMessageButton" class="login100-form-btn" type="submit">Send Message</button></div>
                 </div>
               </div>
             </form>
@@ -533,11 +565,10 @@
                   </br>
 				  <h6 style="text-decoration: underline;">2 STEP SYNERGY EFFECT MASK</h6>
 				  </br>
-				  <div class="float-left"><img class="border-rad" src="img/icons/numbers-one-in-ribbons-collection_1207-84.jpg"></img></div>
+				  
 				  <h6>Step 1:(UPPER FACE MASK)</h6>
 				  <p class="text-muted">Calendula flower extract controls excessive sebum production, shrinking pores to give tighter, more refined skin. Mineral-rich alpine water maintains moisture in the skin.</p>
 				  
-				  <div class="float-left"><img class="border-rad" src="img/icons/numbers-two-in-ribbons-collection_1207-84.jpg"></img></div>
 				  <h6>Step 2:(LOWER FACE 'V' MASK)</h6>
 				  <p class="text-muted">Extracts from Halophyte, an organism which thrives in very salty environment, help eliminate bloating and water retention. The concept is simple, osmotic pressure created by the hypertonic environment lifts out excess water that bulks your face. The end result? A gorgeously slim V-line face with 91.5 degree angles, the "golden" measurement for a beautiful visage.</p>
 				    
@@ -577,11 +608,10 @@
                   </br>
 				  <h6 style="text-decoration: underline;">2 STEP SYNERGY EFFECT MASK</h6>
 				  </br>
-				  <div class="float-left"><img class="border-rad" src="img/icons/numbers-one-in-ribbons-collection_1207-84.jpg"></img></div>
+				  
 				  <h6>Step 1:(UPPER FACE MASK)</h6>
 				  <p class="text-muted">Niacinamide is a whitening factor, making skin lighter and more brillant. Algae extracts help calm and soothe stressed skin. Dark and uneven skin tone is changed to crystal-clear skin.</p>
 				  
-				  <div class="float-left"><img class="border-rad" src="img/icons/numbers-two-in-ribbons-collection_1207-84.jpg"></img></div>
 				  <h6>Step 2:(LOWER FACE 'V' MASK)</h6>
 				  <p class="text-muted">Extracts from Halophyte, an organism which thrives in very salty environment, help eliminate bloating and water retention. The concept is simple, osmotic pressure created by the hypertonic environment lifts out excess water that bulks your face. The end result? A gorgeously slim V-line face with 91.5 degree angles, the "golden" measurement for a beautiful visage.</p>
 				    
@@ -621,11 +651,10 @@
                   </br>
 				  <h6 style="text-decoration: underline;">2 STEP SYNERGY EFFECT MASK</h6>
 				  </br>
-				  <div class="float-left"><img class="border-rad" src="img/icons/numbers-one-in-ribbons-collection_1207-84.jpg"></img></div>
+				  
 				  <h6>Step 1:(UPPER FACE MASK)</h6>
 				  <p class="text-muted">A double-effect cocktail of Hyaluronic Acid, which holds up to 6000x its own weight in moisture, and Aqua Acyl extract from Xylitol, which promotes a moisture barrier between your skin and the environment.</p>
 				  
-				  <div class="float-left"><img class="border-rad" src="img/icons/numbers-two-in-ribbons-collection_1207-84.jpg"></img></div>
 				  <h6>Step 2:(LOWER FACE 'V' MASK)</h6>
 				  <p class="text-muted">Extracts from Halophyte, an organism which thrives in very salty environment, help eliminate bloating and water retention. The concept is simple, osmotic pressure created by the hypertonic environment lifts out excess water that bulks your face. The end result? A gorgeously slim V-line face with 91.5 degree angles, the "golden" measurement for a beautiful visage.</p>
 				    
@@ -665,11 +694,10 @@
                   </br>
 				  <h6 style="text-decoration: underline;">2 STEP SYNERGY EFFECT MASK</h6>
 				  </br>
-				  <div class="float-left"><img class="border-rad" src="img/icons/numbers-one-in-ribbons-collection_1207-84.jpg"></img></div>
+				
 				  <h6>Step 1:(UPPER FACE MASK)</h6>
 				  <p class="text-muted">A powerful cocktail of Adenosine, Glacial Ikoma protein and Glycoprotein promotes skin elasticity and smoothns uneven skin surfaces. Helps fight inital signs of aging to maintain a youthful complexion</p>
 				  
-				  <div class="float-left"><img class="border-rad" src="img/icons/numbers-two-in-ribbons-collection_1207-84.jpg"></img></div>
 				  <h6>Step 2:(LOWER FACE 'V' MASK)</h6>
 				  <p class="text-muted">Extracts from Halophyte, an organism which thrives in very salty environment, help eliminate bloating and water retention. The concept is simple, osmotic pressure created by the hypertonic environment lifts out excess water that bulks your face. The end result? A gorgeously slim V-line face with 91.5 degree angles, the "golden" measurement for a beautiful visage.</p>
 				  

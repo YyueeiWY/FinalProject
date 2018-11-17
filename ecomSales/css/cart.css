@@ -1,55 +1,24 @@
-.txt-heading{padding: 10px 10px;font-size:1.1em;font-weight:bold;color:#999; border-bottom: 1px solid black; border-top-left-radius: .50rem; border-top-right-radius: .50rem;}
-#btnEmpty{background-color:grey;border:0px solid;border-radius:0.25rem;margin:6px 10px;padding:5px 10px;color:#FFF; font-size:0.8em;font-weight:normal;float:right;text-decoration:none;}
-.wrap-cart{border: 1px solid black; border-radius: .50rem; margin-bottom:50px;width: 100%;}
-#shopping-cart {margin-bottom:40px; border: 1px solid black;width: auto;}
-.txt-heading{background-color: white;}
-.cart-item {border-bottom: #79b946 1px dotted;padding: 10px;}
-#product-grid {border-top: #F08426 2px solid;margin-bottom:30px;}
-#product-grid .txt-heading{background-color: #FFD0A6;}
-.product-item {	float:left;	background:#F0F0F0;	margin:10px; padding:5px; width: 300px;}
-.product-item div{text-align:center;	margin:10px;}
-.product-price {color:#F08426;}
-.product-image {height:200px;background-color:#FFF;}
-.clear-float{clear:both;margin-bottom:40px;}
-.cart-action{cursor:pointer;}
-.cart-head-tr{border-bottom: 1px solid black;}
-.cart-tr{border-bottom: 1px solid black;}
-#cart-item {height: 250px; overflow-y: scroll;}
-.cart-back-wrap{background:white;}
-.count_items{
-	background: red;
-    height: auto;
-    width: 25px;
-    border: solid 1px red;
-    border-radius: 50%;
-    text-align: center;
-    position: fixed;
-    right: 0;
-    top: 140px;
-	color: white;
-    z-index: 99;
-}
 
 /* Portfolio Section
 --------------------------------*/
-#portfolio {
+#portfolio1 {
   background: rgba(247, 247, 247, 0.3);
   padding: 80px 0;
   text-align: center;
 }
 
-#portfolio #portfolio-wrapper {
+#portfolio1 #portfolio-wrapper {
   padding-right: 15px;
 }
 
-#portfolio #portfolio-flters {
+#portfolio1 #portfolio-flters {
   padding: 0;
   margin: 0 0 45px 0;
   list-style: none;
   text-align: center;
 }
 
-#portfolio #portfolio-flters li {
+#portfolio1 #portfolio-flters li {
   cursor: pointer;
   margin: 0 10px;
   display: inline-block;
@@ -57,18 +26,37 @@
   font-size: 12px;
   line-height: 20px;
   color: #666666;
-  border-radius: 4px;
+  border-radius: 25px;
   text-transform: uppercase;
   background: #fff;
   margin-bottom: 5px;
+  /*
+    font-family: Montserrat-Bold;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #fff;
+    text-transform: uppercase;
+    width: 10%;
+    height: 150px;
+    border-radius: 25px;
+    background: #57b846;
+display: inline-block;
+    justify-content: center;
+    align-items: center;
+    padding: 0 25px;
+    -webkit-transition: all 0.4s;
+    -o-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    transition: all 0.4s;
+	*/
 }
 
-#portfolio #portfolio-flters li:hover, #portfolio #portfolio-flters li.filter-active {
-  background: greenyellow;
+#portfolio1 #portfolio-flters li:hover, #portfolio1 #portfolio-flters li.filter-active {
+  background: #57b846;
   color: #fff;
 }
 
-#portfolio .portfolio-item {
+#portfolio1 .portfolio-item {
   position: relative;
   overflow: hidden !important;
   margin-bottom: 15px;
@@ -82,17 +70,17 @@
   text-align: center;
 }
 
-#portfolio .portfolio-item a {
+#portfolio1 .portfolio-item a {
   display: block;
   margin-right: 15px;
 }
 
-#portfolio .portfolio-item img {
+#portfolio1 .portfolio-item img {
   position: relative;
   top: 0;
 }
 
-#portfolio .portfolio-item .details {
+#portfolio1 .portfolio-item .details {
   height: 50px;
   background: #2dc997;
   position: absolute;
@@ -101,7 +89,7 @@
   bottom: -50px;
 }
 
-#portfolio .portfolio-item .details h4 {
+#portfolio1 .portfolio-item .details h4 {
   font-size: 14px;
   font-weight: 700;
   color: #fff;
@@ -109,21 +97,50 @@
   margin: 0;
 }
 
-#portfolio .portfolio-item .details span {
+#portfolio1 .portfolio-item .details span {
   display: block;
   color: #fff;
   font-size: 13px;
   padding-left: 8px;
 }
 
-#portfolio .portfolio-item:hover .details {
+#portfolio1 .portfolio-item:hover .details {
   bottom: 0;
 }
 .line:before {
 	content: url(http://forrester-park.co.uk/wp-content/uploads/2014/05/Fancy-line.png); 
 	display: block;
 }
-hr{
-	width: 100%;
-	box-shadow: 0px 1px 0px 0px black;
+
+.txt-heading{padding: 10px 10px;font-size:1.1em;font-weight:bold;color:#999; border-bottom: 1px solid black; border-top-left-radius: .50rem; border-top-right-radius: .50rem;}
+/*#btnEmpty{background-color:grey;border:0px solid;border-radius:0.25rem;margin:6px 10px;padding:5px 10px;color:#FFF; font-size:0.8em;font-weight:normal;float:right;text-decoration:none;}*/
+.wrap-cart{border: 1px solid black; border-radius: .50rem; margin-bottom:50px;width: 100%;}
+.txt-heading{background-color: white;}
+#product-grid {border-top: #F08426 2px solid;margin-bottom:30px;}
+#product-grid .txt-heading{background-color: #FFD0A6;}
+.product-item {	
+	float:left;	
+	background:#F0F0F0;	
+	margin:10px; 
+	padding:5px; 
+	width: 300px;
+	animation: product-item 1s ease-in both;
+	}
+@keyframes product-item  {
+	from {
+		opacity: 0;
+		transform: translate3d(0, -10%, 0);
+	}
+	to {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
 }
+.product-item div{text-align:center;	margin:10px;}
+.product-price {color:#F08426;}
+.product-image {height:200px;background-color:#FFF;}
+.clear-float{clear:both;margin-bottom:40px;}
+.cart-action{cursor:pointer;}
+.cart-head-tr{border-bottom: 1px solid black;}
+.cart-tr{margin: 20px;}
+.cart-back-wrap{background:white;}

@@ -9,11 +9,15 @@
 		$lname = $_POST['lname'];
 		$email = $_POST['email'];
 		$img = 'default.png';
+		$type = 'image/jpeg';
 		$phone = $_POST['phone'];
 		$date = date('Y-m-d H:i:s');
-		$enum = 'admin';
+		$enum = 'user';
+		$payid = $_POST['uname']; 
+		$notifid = $_POST['uname']; 
 		
-		$query = "Insert into login values(NULL, '$uname', '$pword', '$fname', '$lname', '$email', '$img', '$date', '$phone', '$enum')";
+		$query = "INSERT INTO `login`(`userid`, `username`, `password`, `fname`, `lname`, `email`, `datejoin`, `phone`, `admin`, `name`, `type`, `payid`, `notifid`) 
+		VALUES (NULL, '$uname', '$pword', '$fname', '$lname', '$email', '$date', '$phone', '$enum', '$img', '$type', '$payid', '$notifid')";
 		
 		if (mysqli_query($conn, $query)){
 			$last_id = mysqli_insert_id($conn);
