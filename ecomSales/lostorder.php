@@ -214,7 +214,8 @@
 				FROM product
 				INNER JOIN productorder ON product.id = productorder.productid ORDER BY date DESC LIMIT 0, 10";
 		*/
-		$query = "SELECT B.id, A.name, B.quantity, B.date, B.delivery, B.address, B.city, B.state, B.postcode, B.contact, B.email, A.code, A.categories, A.image, A.price
+		$query = "SELECT B.id, A.name, B.quantity, B.date, B.delivery, B.address, B.city, B.state, 
+				B.postcode, B.contact, B.email, A.code, A.categories, A.image, A.price, B.username
 				FROM product A RIGHT JOIN productorder B ON A.id = B.productid
                 WHERE B.delivery = 'progress' ORDER BY $sortby";
 		
@@ -242,12 +243,13 @@
 				
 				$img = 'img/product-images/8503702-deleted-stamp.jpg';
 				$productprice = $row[14];
+				$user = $row[15];
    
 				if($progress == 'progress' && $productprice == null){
 		?>
 		<form method="post" enctype="multipart/form-data"><?php echo $rowid; ?>
 		<div class="news col-md-12 m-t-20">
-			<div class="col-md-12"><label class="text-uppercase"><h5>User Name : <strong><?php echo $dusername; ?></strong></h5></label></div>
+			<div class="col-md-12"><label class="text-uppercase"><h5>User Name : <strong><?php echo $user; ?></strong></h5></label></div>
 			<div class="col-md-12">Product Name : <strong><?php echo $productname; ?></strong></div>
 				
 				<div class="row">

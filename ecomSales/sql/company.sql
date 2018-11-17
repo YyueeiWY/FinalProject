@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 17, 2018 at 11:22 AM
+-- Generation Time: Nov 17, 2018 at 11:49 AM
 -- Server version: 5.7.19
 -- PHP Version: 5.6.31
 
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `notification` (
   `notifid` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `notifid` (`notifid`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `notification`
@@ -83,7 +83,8 @@ CREATE TABLE IF NOT EXISTS `notification` (
 INSERT INTO `notification` (`id`, `title`, `content`, `date`, `notifid`) VALUES
 (27, 'Order ID:85 has been sent out', 'Post code : z Item will be arrived for 2 to 4 days', '2018-11-15 17:32:02', 'test'),
 (28, 'Order ID:86 has been sent out', 'Post code : z Item will be arrived for 2 to 4 days', '2018-11-15 17:32:30', 'test'),
-(29, 'Order ID:87 has been sent out', 'Post code : z Item will be arrived for 2 to 4 days', '2018-11-15 17:50:50', 'test');
+(29, 'Order ID:87 has been sent out', 'Post code : z Item will be arrived for 2 to 4 days', '2018-11-15 17:50:50', 'test'),
+(30, 'Order ID:98 has been sent out', 'Post code : sdaad123 Item will be arrived for 2 to 4 days', '2018-11-17 11:48:55', 'user');
 
 -- --------------------------------------------------------
 
@@ -101,17 +102,15 @@ CREATE TABLE IF NOT EXISTS `payment` (
   `code` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `payid` (`payid`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `payment`
 --
 
 INSERT INTO `payment` (`id`, `payid`, `method`, `date`, `total`, `code`) VALUES
-(57, 'test', 'Debit Card', '2018-11-15 17:27:45', 40.0256, ''),
-(58, 'test', 'Debit Card', '2018-11-15 17:36:08', 105.9894, ''),
-(59, 'user', 'Debit Card', '2018-11-15 17:36:25', 105.9894, ''),
-(60, 'user', 'Debit Card', '2018-11-15 17:57:10', 117.2784, '');
+(61, 'test', 'Debit Card', '2018-11-17 11:44:31', 166.0278, ''),
+(62, 'user', 'Debit Card', '2018-11-17 11:45:16', 252.0044, '');
 
 -- --------------------------------------------------------
 
@@ -129,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `product` (
   `price` double NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `product`
@@ -167,23 +166,24 @@ CREATE TABLE IF NOT EXISTS `productorder` (
   `postcode` int(11) NOT NULL,
   `contact` int(11) NOT NULL,
   `email` text NOT NULL,
+  `username` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `productid` (`productid`),
   KEY `payid` (`payid`)
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `productorder`
 --
 
-INSERT INTO `productorder` (`id`, `payid`, `productid`, `quantity`, `date`, `delivery`, `address`, `city`, `state`, `postcode`, `contact`, `email`) VALUES
-(85, 57, 6, 1, '2018-11-15 17:27:45', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom'),
-(86, 57, 5, 1, '2018-11-15 17:27:45', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom'),
-(87, 58, 14, 1, '2018-11-15 17:36:08', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom'),
-(88, 59, 14, 1, '2018-11-15 17:36:25', 'progress', 'aasdas', 'asdas', 'sadas', 123, 1231, 'asdas@gmail.com'),
-(89, 60, 6, 1, '2018-11-15 17:57:10', 'progress', 'aasdas', 'asdas', 'sadas', 123, 1231, 'asdas@gmail.com'),
-(90, 60, 5, 1, '2018-11-15 17:57:10', 'progress', 'aasdas', 'asdas', 'sadas', 123, 1231, 'asdas@gmail.com'),
-(91, 60, 4, 1, '2018-11-15 17:57:10', 'progress', 'aasdas', 'asdas', 'sadas', 123, 1231, 'asdas@gmail.com');
+INSERT INTO `productorder` (`id`, `payid`, `productid`, `quantity`, `date`, `delivery`, `address`, `city`, `state`, `postcode`, `contact`, `email`, `username`) VALUES
+(92, 61, 5, 1, '2018-11-17 11:44:31', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom', 'test'),
+(93, 61, 6, 1, '2018-11-17 11:44:31', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom', 'test'),
+(94, 61, 15, 1, '2018-11-17 11:44:31', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom', 'test'),
+(95, 61, 8, 1, '2018-11-17 11:44:31', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom', 'test'),
+(96, 62, 6, 1, '2018-11-17 11:45:16', 'progress', 'jalan kok', 'kok', 'kok', 6969, 1231, 'asdas@gmail.com', 'user'),
+(97, 62, 15, 2, '2018-11-17 11:45:16', 'progress', 'jalan kok', 'kok', 'kok', 6969, 1231, 'asdas@gmail.com', 'user'),
+(98, 62, 8, 1, '2018-11-17 11:45:16', 'sent', 'jalan kok', 'kok', 'kok', 6969, 1231, 'asdas@gmail.com', 'user');
 
 -- --------------------------------------------------------
 
@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS `stock` (
   `stock` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `stock`
@@ -237,10 +237,10 @@ CREATE TABLE IF NOT EXISTS `stock` (
 
 INSERT INTO `stock` (`id`, `code`, `stock`) VALUES
 (1, 'VM1p4', 25),
-(2, 'P1O1RE', 13),
-(3, 'WH1it1n1', 15),
+(2, 'P1O1RE', 12),
+(3, 'WH1it1n1', 13),
 (4, 'MO1ist', 30),
-(5, 'WR1nk2', 30),
+(5, 'WR1nk2', 28),
 (6, 'G1ol3d', 30),
 (7, 'coll23ag', 27),
 (8, 'Mo1s3tuz', 30),

@@ -83,8 +83,8 @@ if(isset($_GET['fname'])){
 		$quantity = $item['quantity'];
 		$productcode = $item['code'];
 			
-			$sql = "INSERT INTO `productorder`(`id`, `payid`, `productid`, `quantity`, `date`, `delivery`, `address`, `city`, `state`, `postcode`, `contact`, `email`) 
-			VALUES (null, '$payid', '$productid', '$quantity', '$date', 'progress', '$address', '$city', '$state', '$postcode', '$contact', '$email')";
+			$sql = "INSERT INTO `productorder`(`id`, `payid`, `productid`, `quantity`, `date`, `delivery`, `address`, `city`, `state`, `postcode`, `contact`, `email`, `username`) 
+			VALUES (null, '$payid', '$productid', '$quantity', '$date', 'progress', '$address', '$city', '$state', '$postcode', '$contact', '$email', '$userid')";
 			
 			if (mysqli_query($conn, $sql)) {
 				
