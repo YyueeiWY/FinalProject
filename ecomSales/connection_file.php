@@ -39,12 +39,12 @@
 	}
 
    //function alert
-      function phpAlert($msg) {
+    function phpAlert($msg) {
          echo '<script language="javascript">';
          echo 'alert ("' . $msg . '")';
          echo '</script>';
-      }
-	  
+    }
+	 
 	function sidebar(){
 	if (isset($_SESSION['LoginID'])){
 

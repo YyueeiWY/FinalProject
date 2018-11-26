@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 17, 2018 at 11:49 AM
+-- Generation Time: Nov 27, 2018 at 12:01 AM
 -- Server version: 5.7.19
 -- PHP Version: 5.6.31
 
@@ -72,19 +72,24 @@ CREATE TABLE IF NOT EXISTS `notification` (
   `content` text NOT NULL,
   `date` datetime NOT NULL,
   `notifid` varchar(20) NOT NULL,
+  `receive` enum('receiving','received') NOT NULL,
+  `orderid` int(11) NOT NULL,
+  `expiredate` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `notifid` (`notifid`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `notification`
 --
 
-INSERT INTO `notification` (`id`, `title`, `content`, `date`, `notifid`) VALUES
-(27, 'Order ID:85 has been sent out', 'Post code : z Item will be arrived for 2 to 4 days', '2018-11-15 17:32:02', 'test'),
-(28, 'Order ID:86 has been sent out', 'Post code : z Item will be arrived for 2 to 4 days', '2018-11-15 17:32:30', 'test'),
-(29, 'Order ID:87 has been sent out', 'Post code : z Item will be arrived for 2 to 4 days', '2018-11-15 17:50:50', 'test'),
-(30, 'Order ID:98 has been sent out', 'Post code : sdaad123 Item will be arrived for 2 to 4 days', '2018-11-17 11:48:55', 'user');
+INSERT INTO `notification` (`id`, `title`, `content`, `date`, `notifid`, `receive`, `orderid`, `expiredate`) VALUES
+(104, 'You just got a PromoCode!!!', 'It expires after 7days. Use it before Expire! <br>Code : cZR6VSjAO8 for 20%', '2018-11-26 23:47:01', 'user', 'received', 0, NULL),
+(105, 'Order ID:105 has been sent out', 'Tracking code : cZR6VSjAO8<br>Item will be arrived for 2 to 4 days with poslaju<br>Please do track your item with following link: <br>https://www.poslaju.com.my/track-trace-v2/', '2018-11-26 23:51:29', 'user', 'received', 105, '2018-11-30 23:51:29'),
+(106, 'Order ID:106 has been sent out', 'Tracking code : cZR6VSjAO8<br>Item will be arrived for 2 to 4 days with poslaju<br>Please do track your item with following link: <br>https://www.poslaju.com.my/track-trace-v2/', '2018-11-26 23:51:37', 'user', 'received', 106, '2018-11-25 23:51:37'),
+(107, 'Order ID:107 has been sent out', 'Tracking code : d12f41r4<br>Item will be arrived for 2 to 4 days with poslaju<br>Please do track your item with following link: <br>https://www.poslaju.com.my/track-trace-v2/', '2018-11-26 23:51:54', 'test', 'receiving', 107, '2018-11-30 23:51:54'),
+(108, 'Order ID106 is arrived to Customer', 'Customer user has received the item', '2018-11-26 23:57:43', 'user', 'received', 106, NULL),
+(109, 'Order ID105 is arrived to Customer', 'Customer user has received the item', '2018-11-26 23:59:07', 'user', 'received', 105, NULL);
 
 -- --------------------------------------------------------
 
@@ -102,15 +107,15 @@ CREATE TABLE IF NOT EXISTS `payment` (
   `code` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `payid` (`payid`)
-) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `payment`
 --
 
 INSERT INTO `payment` (`id`, `payid`, `method`, `date`, `total`, `code`) VALUES
-(61, 'test', 'Debit Card', '2018-11-17 11:44:31', 166.0278, ''),
-(62, 'user', 'Debit Card', '2018-11-17 11:45:16', 252.0044, '');
+(66, 'user', 'Debit Card', '2018-11-26 23:50:02', 8648.7104, 'cZR6VSjAO8'),
+(67, 'test', 'Debit Card', '2018-11-26 23:50:56', 40.0256, '');
 
 -- --------------------------------------------------------
 
@@ -128,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `product` (
   `price` double NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `product`
@@ -144,7 +149,8 @@ INSERT INTO `product` (`id`, `name`, `code`, `categories`, `image`, `price`) VAL
 (10, 'Collagen 10packs', 'coll23ag', 'packages', 'img/product-images/Collagen10pack.jpg', 180.88),
 (11, 'Moisturizing 10packages', 'Mo1s3tuz', 'packages', 'img/product-images/Moisturizing10pack.jpg', 180.88),
 (12, 'Pore 10packages', 'P03re', 'packages', 'img/product-images/Pore10pack.jpg', 180.88),
-(13, 'Suppression 10packages', 'Sup3re1s10', 'packages', 'img/product-images/Suppression10pack.jpg', 180.88);
+(13, 'Suppression 10packages', 'Sup3re1s10', 'packages', 'img/product-images/Suppression10pack.jpg', 180.88),
+(17, 'Mers(selling car not man)', 'mers101', 'Mask', 'img/product-images/5bfc15d046a159.61552433.jpg ', 9999.99);
 
 -- --------------------------------------------------------
 
@@ -170,20 +176,18 @@ CREATE TABLE IF NOT EXISTS `productorder` (
   PRIMARY KEY (`id`),
   KEY `productid` (`productid`),
   KEY `payid` (`payid`)
-) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `productorder`
 --
 
 INSERT INTO `productorder` (`id`, `payid`, `productid`, `quantity`, `date`, `delivery`, `address`, `city`, `state`, `postcode`, `contact`, `email`, `username`) VALUES
-(92, 61, 5, 1, '2018-11-17 11:44:31', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom', 'test'),
-(93, 61, 6, 1, '2018-11-17 11:44:31', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom', 'test'),
-(94, 61, 15, 1, '2018-11-17 11:44:31', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom', 'test'),
-(95, 61, 8, 1, '2018-11-17 11:44:31', 'progress', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom', 'test'),
-(96, 62, 6, 1, '2018-11-17 11:45:16', 'progress', 'jalan kok', 'kok', 'kok', 6969, 1231, 'asdas@gmail.com', 'user'),
-(97, 62, 15, 2, '2018-11-17 11:45:16', 'progress', 'jalan kok', 'kok', 'kok', 6969, 1231, 'asdas@gmail.com', 'user'),
-(98, 62, 8, 1, '2018-11-17 11:45:16', 'sent', 'jalan kok', 'kok', 'kok', 6969, 1231, 'asdas@gmail.com', 'user');
+(103, 66, 16, 1, '2018-11-26 23:50:02', 'progress', 'jalan kok', 'abc', 'petaling', 52000, 1231, 'asdas@gmail.com', 'user'),
+(104, 66, 17, 1, '2018-11-26 23:50:02', 'progress', 'jalan kok', 'abc', 'petaling', 52000, 1231, 'asdas@gmail.com', 'user'),
+(105, 66, 5, 1, '2018-11-26 23:50:02', 'sent', 'jalan kok', 'abc', 'petaling', 52000, 1231, 'asdas@gmail.com', 'user'),
+(106, 66, 6, 2, '2018-11-26 23:50:02', 'sent', 'jalan kok', 'abc', 'petaling', 52000, 1231, 'asdas@gmail.com', 'user'),
+(107, 67, 6, 2, '2018-11-26 23:50:56', 'sent', 'jalan venoshd', 'venoshd', 'venoshd', 6969, 1234, 'abc@gmail.coom', 'test');
 
 -- --------------------------------------------------------
 
@@ -197,24 +201,18 @@ CREATE TABLE IF NOT EXISTS `promocode` (
   `code` varchar(255) NOT NULL,
   `discount` int(11) NOT NULL,
   `used` enum('valid','invalid') NOT NULL,
-  `date` date NOT NULL,
+  `date` datetime NOT NULL,
+  `expiredate` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `promocode`
 --
 
-INSERT INTO `promocode` (`id`, `code`, `discount`, `used`, `date`) VALUES
-(1, '1234', 30, 'invalid', '2018-02-02'),
-(3, 'GD682', 30, 'valid', '2018-11-08'),
-(6, '1', 1, 'invalid', '2018-11-08'),
-(7, '7O8cD4', 30, 'invalid', '2018-11-08'),
-(8, 'nme46u', 20, 'valid', '2018-11-08'),
-(9, 'OUYAiG', 20, 'valid', '2018-11-08'),
-(10, '6dI', 20, 'valid', '2018-11-08'),
-(11, '4tjRYS47wD', 20, 'valid', '2018-11-08');
+INSERT INTO `promocode` (`id`, `code`, `discount`, `used`, `date`, `expiredate`) VALUES
+(22, 'cZR6VSjAO8', 20, 'invalid', '2018-11-26 23:47:01', '2018-12-03 23:47:01');
 
 -- --------------------------------------------------------
 
@@ -229,7 +227,7 @@ CREATE TABLE IF NOT EXISTS `stock` (
   `stock` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `stock`
@@ -237,15 +235,16 @@ CREATE TABLE IF NOT EXISTS `stock` (
 
 INSERT INTO `stock` (`id`, `code`, `stock`) VALUES
 (1, 'VM1p4', 25),
-(2, 'P1O1RE', 12),
-(3, 'WH1it1n1', 13),
-(4, 'MO1ist', 30),
-(5, 'WR1nk2', 28),
+(2, 'P1O1RE', 10),
+(3, 'WH1it1n1', 8),
+(4, 'MO1ist', 29),
+(5, 'WR1nk2', 27),
 (6, 'G1ol3d', 30),
 (7, 'coll23ag', 27),
 (8, 'Mo1s3tuz', 30),
 (9, 'P03re', 30),
-(10, 'Sup3re1s10', 29);
+(10, 'Sup3re1s10', 29),
+(14, 'mers101', 2);
 
 -- --------------------------------------------------------
 
@@ -273,7 +272,7 @@ CREATE TABLE IF NOT EXISTS `user_address` (
 INSERT INTO `user_address` (`id`, `username`, `addnum`, `address`, `city`, `state`, `postcode`) VALUES
 (14, 'test', 1, 'jalan venoshd', 'venoshd', 'venoshd', 6969),
 (15, 'test', 2, '', '', '', NULL),
-(16, 'user', 1, NULL, NULL, NULL, NULL),
+(16, 'user', 1, 'jalan kok', 'abc', 'petaling', 52000),
 (17, 'user', 2, NULL, NULL, NULL, NULL),
 (18, 'test1', 1, NULL, NULL, NULL, NULL),
 (19, 'test1', 2, NULL, NULL, NULL, NULL),

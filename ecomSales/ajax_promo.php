@@ -5,7 +5,8 @@ require_once("connection_file.php");
 if(isset($_POST['promocode'])){
 	
 	$promocode = $_POST['promocode'];
-	$sql = "SELECT * FROM `promocode` WHERE code = '$promocode' AND used = 'valid'";
+	$date = date("Y-m-d H:i:s", STRTOTIME(date('h:i:sa')));
+	$sql = "SELECT * FROM `promocode` WHERE code = '$promocode' AND used = 'valid' AND expiredate >= '$date'";
 	$result = mysqli_query($conn, $sql);
 	
 	if(!empty($_POST['promocode'])){

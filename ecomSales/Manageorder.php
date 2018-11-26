@@ -36,12 +36,14 @@
 					if (mysqli_query($conn,$setprogress)){
 						
 						$itemtitle = 'Order ID:' . $rowid . ' ' . 'has been sent out';
-						$itemcontent = 'Post code : ' . $inputvalue . ' ' . 'Item will be arrived for 2 to 4 days';
+						$itemcontent = 'Tracking code : ' . $inputvalue . '<br>' . 'Item will be arrived for 2 to 4 days with poslaju' . '<br>' . 'Please do track your item with following link: ' . '<br>' . 'https://www.poslaju.com.my/track-trace-v2/';
 						$date = date("Y-m-d H:i:s", STRTOTIME(date('h:i:sa')));
+						$expiredate = date("Y-m-d H:i:s", strtotime("+4 day", STRTOTIME(date('h:i:sa'))));
 						$sendto = $salesusername;
+						$receivedset = 'receiving';
 						
-							$sendnotif = "INSERT INTO `notification`(`id`, `title`, `content`, `date`, `notifid`) 
-									VALUES (null, '$itemtitle', '$itemcontent', '$date', '$sendto')";
+							$sendnotif = "INSERT INTO `notification`(`id`, `title`, `content`, `date`, `notifid`, `receive`, `orderid`, `expiredate`) 
+									VALUES (null, '$itemtitle', '$itemcontent', '$date', '$sendto', '$receivedset', '$rowid', '$expiredate')";
 							if (mysqli_query($conn,$sendnotif)){
 								
 								header("Refresh:0");

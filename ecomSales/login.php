@@ -19,10 +19,60 @@
 				$loginquery = "SELECT * FROM `login` WHERE username = '$username'";
 	
 				if ($result = mysqli_query($conn,$loginquery)){
+					
 					// Fetch one and one row
 					while ($row = mysqli_fetch_row($result)){
 						$_SESSION['admin'] = $row[8];
 					}
+
+					//setReceivedItem//
+					$setquery = "SELECT * FROM `notification`";
+					
+					if ($result = mysqli_query($conn,$setquery)){
+						
+					// Fetch one and one row
+						while ($row = mysqli_fetch_row($result)){
+							$rowid = $row[0];
+							$title = $row[1];
+							$content = $row[2];
+							$date = $row[3];
+							$notifid = $row[4];
+							$receive = $row[5];
+							$orderid = $row[6];
+							$expiredate = $row[7];
+							
+							$currentdate = date("Y-m-d H:i:s", STRTOTIME(date('h:i:sa')));
+							
+							if(!empty($expiredate)){
+								if($receive == 'receiving'){
+									if($expiredate <= $currentdate){
+										$setreceive = "UPDATE `notification` SET `receive`='received' where id = '$rowid'";
+										if (mysqli_query($conn,$setreceive)){
+											$title = 'Order ID' . $orderid . ' is arrived to Customer';
+											$content = 'Customer' . ' ' . $notifid . ' ' . 'has received the item';
+											$date = date("Y-m-d H:i:s", STRTOTIME(date('h:i:sa')));
+											$receivedset = 'received';
+											
+											$receiveditem = "INSERT INTO `notification`(`id`, `title`, `content`, `date`, `notifid`, `receive`, `orderid`, `expiredate`) 
+													VALUES (NULL, '$title', '$content', '$date', '$notifid', '$receivedset', '$orderid', null)";
+													
+											if(mysqli_query($conn,$receiveditem)){
+											
+												header("Refresh:0");
+											
+											}else{
+											phpAlert('Fail to receive item');
+											}
+											
+										}else{
+											phpAlert('Fail to receive item');
+										}
+									}else{}
+								}else{}
+							}else{}
+						}
+					}
+					//setReceivedItem//
 				}
 			
 				$_SESSION['LoginID'] = $username;

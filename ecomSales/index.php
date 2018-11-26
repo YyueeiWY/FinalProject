@@ -2,6 +2,7 @@
    session_start();
 
    include 'connection_file.php';
+   
 ?>
 
 <!DOCTYPE html>

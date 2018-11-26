@@ -10,9 +10,10 @@
 		$code = $_POST['code'];
 		$discount = $_POST['discount'];
 		$date = date("Y-m-d H:i:s", STRTOTIME(date('h:i:sa')));
+		$expiredate = date("Y-m-d H:i:s", strtotime("+7 day", STRTOTIME(date('h:i:sa'))));
 	   
-		$query = "INSERT INTO `promocode`(`id`, `code`, `discount`, `used`, `date`) 
-			VALUES (null, '$code', '$discount', 'valid', '$date')";
+		$query = "INSERT INTO `promocode`(`id`, `code`, `discount`, `used`, `date`, `expiredate`) 
+			VALUES (null, '$code', '$discount', 'valid', '$date', '$expiredate')";
 			
 			if (mysqli_query($conn, $query)){
 				phpAlert("Coupon Created");
@@ -25,21 +26,23 @@
 			}
 	   }
 		
-		if(isset($_POST['send']) && isset($_POST['title']) && isset($_POST['content'])){
+		if(isset($_POST['send'])){
 			$sendto = $_POST['send'];
-			$title = $_POST['title'];
-			$content = $_POST['content'];
+			$title = 'You just got a PromoCode!!!';
+			$content = 'It expires after 7days. Use it before Expire! ' . '<br>' . 'Code : '. $code . ' ' . 'for' . ' ' . $discount . '%';
 			$date = date("Y-m-d H:i:s", STRTOTIME(date('h:i:sa')));
+			$receiveset = "received";
+			$orderid = "0";
 			
-			$sendquery = "INSERT INTO `notification`(`id`, `title`, `content`, `date`, `notifid`) 
-			VALUES (null, '$title', '$content', '$date', '$sendto')";
+			$sendquery = "INSERT INTO `notification`(`id`, `title`, `content`, `date`, `notifid`, `receive`, `orderid`, `expiredate`) 
+					VALUES (null, '$title', '$content', '$date', '$sendto', '$receiveset', '$orderid', null)";
 			
 			if (mysqli_query($conn, $sendquery)){
 				phpAlert("Success send to user");
 				header("Refresh:0");
-			}else{}
+			}else{phpAlert("Fail to send to user");}
 		
-		}else{}
+		}else{phpAlert("Content Blank");}
    }
    
 ?>
@@ -235,9 +238,9 @@ function search(string){
 						<span class="focus-input100"></span>
 					</div>
 					
-					<div>Discount :</div>
+					<div>Discount percentage %:</div>
 					<div class="wrap-input100 validate-input">
-						<input placeholder="Discount..." name="discount" class="input100 container-margin">
+						<input placeholder="Discount %..." name="discount" class="input100 container-margin">
 						<span class="focus-input100"></span>
 					</div>
 			</div>
@@ -251,16 +254,6 @@ function search(string){
 		<div>Search User : </div>
 		<div class="wrap-input100 validate-input">
 			<input placeholder="Send to..." id="send" name="send" autocomplete="off" class="input100 container-margin">
-			<span class="focus-input100"></span>
-		</div>
-		<div>Title :</div>
-		<div class="wrap-input100 validate-input">
-			<input placeholder="Title..." id="title" name="title" autocomplete="off" class="input100 container-margin">
-			<span class="focus-input100"></span>
-		</div>
-		<div>Content :</div>
-		<div class="wrap-input100 validate-input">
-			<textarea style="height: 120px;" placeholder="Content..." id="content" name="content" autocomplete="off" class="input100 container-margin"></textarea>
 			<span class="focus-input100"></span>
 		</div>
 		</div>

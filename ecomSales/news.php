@@ -3,6 +3,46 @@
 
    include 'connection_file.php';
    
+		$query = "SELECT * FROM `notification`";
+		
+		if ($result = mysqli_query($GLOBALS['conn'],$query)){
+			
+		// Fetch one and one row
+			while ($row = mysqli_fetch_row($result)){
+				$rowid = $row[0];
+				$title = $row[1];
+				$content = $row[2];
+				$date = $row[3];
+				$notifid = $row[4];
+				$receive = $row[5];
+				$orderid = $row[6];
+				
+				if(isset($_POST[$rowid])){
+					
+					$setreceive = "UPDATE `notification` SET `receive`='received' WHERE id = '$rowid'";
+					if (mysqli_query($conn,$setreceive)){
+						$title = 'Order ID' . $orderid . ' is arrived to Customer';
+						$content = 'Customer' . ' ' . $notifid . ' ' . 'has received the item';
+						$date = date("Y-m-d H:i:s", STRTOTIME(date('h:i:sa')));
+						$receivedset = 'received';
+						
+						$receiveditem = "INSERT INTO `notification`(`id`, `title`, `content`, `date`, `notifid`, `receive`, `orderid`, `expiredate`) 
+								VALUES (NULL, '$title', '$content', '$date', '$notifid', '$receivedset', '$orderid', null)";
+								
+						if(mysqli_query($conn,$receiveditem)){
+						
+							header("Refresh:0");
+						
+						}else{
+						phpAlert('Fail to receive item');
+						}
+						
+					}else{
+						phpAlert('Fail to receive item');
+					}
+				}
+			}
+		}
 ?>
 
 <!DOCTYPE html>
@@ -98,7 +138,15 @@
 		  
 			<!-- cart -->
 			<ul class="navbar-nav text-uppercase">
-			<li class="nav-item open-cart-button cart-dropdown"><a href="order.php"><i class="fa fa-shopping-cart" style="font-size:24px"></i></a></li>
+			<li class="nav-item open-cart-button cart-dropdown"><a href="order.php"><i class="fa fa-shopping-cart" style="font-size:24px"></i>
+				<i id="cart-count"><?php 
+				if(isset($_SESSION["cart_item"])){
+					echo count($_SESSION["cart_item"]); 
+				}else{
+					echo 0; 
+				}
+				?></i>
+			</a></li>
 			<li class="nav-item open-cart-button news-dropdown"><a href="news.php"><i class="fa fa-columns" style="font-size:24px"></i></a></li>
 			</ul>
 			<!--
@@ -125,7 +173,7 @@
         <div class="section-header">
 		<div class="aboout_logo">
 		  <img src="img/icons/1j+ojl1FOMkX9WypfBe43D6kjfGDpBFGnBbJwXs1M3EMoAJtlSEp2j...png"></img>
-          <h1 class="section-title">News</h1>
+          <h1 class="section-title">Notification</h1>
 		  </div>
           <p class="section-description">Regen Cosmetic / South Korea</p>
         </div>
@@ -134,31 +182,77 @@
 	<div class="cart-popup col-md-12" id="myCart">
 		<div class="row">
 			<div style="width: auto;">
-				<h2>News</h2>
+				<h2></h2>
 			</div>
 		</div>
 		<div class="m-t-50" style=" overflow-y: auto; height: 500px;">
 		<?php
 		if (isset($_SESSION['LoginID'])){
 			$username = $_SESSION['LoginID'];
-
-		$query = "SELECT * FROM `notification` WHERE notifid = '$username' ORDER BY date DESC LIMIT 0, 10";
-		
-		if ($result = mysqli_query($GLOBALS['conn'],$query)){
+			$admin = $_SESSION['admin'];
 			
-		// Fetch one and one row
-			while ($row = mysqli_fetch_row($result)){
-				$title = $row[1];
-				$content = $row[2];
-				$date = $row[3];
-		?>
-			<div class="news">
-				<label class="text-uppercase"><strong><?php echo $title; ?></strong></label>
-					<h3><?php echo $content; ?></h3><?php echo $date; ?>
-			</div>
-		<?php
+			if ($admin == 'admin'){
+
+				$query = "SELECT * FROM `notification` ORDER BY date DESC LIMIT 0, 10";
+				
+				if ($result = mysqli_query($GLOBALS['conn'],$query)){
+					
+				// Fetch one and one row
+					while ($row = mysqli_fetch_row($result)){
+						$title = $row[1];
+						$content = $row[2];
+						$date = $row[3];
+						$notifid = $row[4];
+						$receive = $row[5];
+						$expiredate = $row[7];
+						
+						if($receive == 'received' && $expiredate == null){
+				?>
+					<div class="news">
+						<label class="text-uppercase"><strong>For <?php echo $notifid; ?></strong></label><br>
+						<label class="text-uppercase"><strong><?php echo $title; ?></strong></label>
+							<h4><?php echo $content; ?></h4><?php echo $date; ?>
+					</div>
+				<?php
+						}else{}
+					}
+				}
+			}else{
+				$query = "SELECT * FROM `notification` WHERE notifid = '$username' ORDER BY date DESC LIMIT 0, 10";
+				
+				if ($result = mysqli_query($GLOBALS['conn'],$query)){
+					
+				// Fetch one and one row
+					while ($row = mysqli_fetch_row($result)){
+						$rowid = $row[0];
+						$title = $row[1];
+						$content = $row[2];
+						$date = $row[3];
+						$receive = $row[5];
+						$expiredate = $row[7];
+				?>
+					<div class="news">
+						<label class="text-uppercase"><strong><?php echo $title; ?></strong></label>
+							<h4><?php echo $content; ?></h4>
+				<?php
+				if($receive == 'receiving'){
+				?>
+				<div class="row">
+					<div class="m-t-10 m-b-20" style="width: 300px; margin-left: auto; margin-right: auto;">
+					<div><label><strong>Kinda do click receive button if you have received the item :</strong></label></div>
+						<div><button type="submit" name="<?php echo $rowid; ?>" class="login100-form-btn">Received</button></div>
+					</div>
+				</div>
+				<?php
+				}else{}
+				?>
+				<?php echo $date; ?>
+					
+					</div>
+				<?php
+					}
+				}
 			}
-		  }
 		}
 		?>
 			
